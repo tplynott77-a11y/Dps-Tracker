@@ -267,3 +267,38 @@ body.farming-mode .sidebar .divider-line,body.archive-mode .sidebar .divider-lin
 .farm-build-goal-note{font-size:11px;color:#82937e;line-height:1.6;margin-top:11px;padding-top:9px;border-top:1px dashed #dbe9da}
 .farm-build-goal .farm-status.later{white-space:nowrap}
 .farm-char-main .farm-char-buildlink{display:inline-block}
+
+/* Official Genshin game item artwork — restrained visual layer */
+.farm-game-icon{display:inline-flex;position:relative;flex-shrink:0;vertical-align:middle;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:#eaf1e9;color:#779481;overflow:hidden;font:800 14px Georgia,serif;line-height:1}
+.farm-game-icon.xs{width:20px;height:20px;border-radius:6px;font-size:11px}
+.farm-game-icon.sm{width:28px;height:28px;font-size:14px}
+.farm-game-icon.md{width:36px;height:36px;border-radius:10px;font-size:17px}
+.farm-game-icon.lg{width:48px;height:48px;border-radius:12px;font-size:23px}
+.farm-game-icon img{position:absolute;inset:0;object-fit:contain;width:100%;height:100%;display:block;z-index:1;filter:drop-shadow(0 1px 2px #4561441c)}
+.farm-game-icon-fallback{z-index:0;text-align:center;line-height:1}
+.farm-resource-label{display:inline-flex;gap:9px;align-items:center;min-width:0;vertical-align:middle;text-align:left;font-size:inherit;font-weight:inherit;color:inherit}
+.farm-resource-label>span:last-child{overflow-wrap:anywhere}
+.farm-table-wrap .farm-resource-label{min-width:150px}
+.farm-metric-illustrated{position:relative;padding-right:67px}
+.farm-metric-art{position:absolute;right:12px;top:12px}
+.farm-metric-art .farm-game-icon{background:#f3f7ee;border:1px solid #e3eddf}
+.farm-metric-illustrated>span:first-of-type{max-width:100%}
+.farm-weapon-symbol:has(.farm-game-icon){background:#e7eddd;overflow:hidden}
+.farm-weapon-symbol .farm-game-icon{background:transparent;border-radius:8px;box-shadow:none}
+.farm-artifact-set{display:flex;align-items:center;gap:9px;margin:9px 0 6px;min-width:0}
+.farm-artifact-set .farm-game-icon{background:#eef4ea}
+.farm-artifact-set strong{flex:1;overflow-wrap:anywhere;margin:0;line-height:1.4}
+.farm-field-mat{display:flex;align-items:center;margin:7px 0 5px;color:#7e9485;font-size:11px}
+.farm-field-mat .farm-resource-label{font-weight:700;gap:8px}
+.farm-resin-row .farm-resource-label{font-weight:800;gap:8px;font-size:12px}
+.farm-resin-row .farm-game-icon{border:1px solid #d5e6d5;background:#f3f8f1}
+.farm-goal-material{display:inline-flex;align-items:center;gap:4px;margin:2px 7px 2px 0;padding:2px 5px;border-radius:7px;background:#f0f5eb;color:#668466;vertical-align:middle}
+.farm-goal-material .farm-game-icon{background:transparent}
+@media(max-width:560px){
+ .farm-metric-illustrated{padding-right:48px}
+ .farm-metric-art{right:5px;top:7px}
+ .farm-metric-art .farm-game-icon.lg{width:38px;height:38px}
+ .farm-artifact-set .farm-game-icon.lg{width:42px;height:42px}
+ .farm-artifact-set{gap:12px}
+ .farm-table-wrap .farm-resource-label{min-width:122px}
+}
