@@ -13,9 +13,11 @@ const tabs=[
 ['inventory',"'Inventory'!A4:C800"],
 ['field',"'Resin-Free Objectives'!A5:J175"],
 ['characters',"'Characters'!A4:G112"],
-['dashboard',"'Dashboard'!A4:E9"]
+['dashboard',"'Dashboard'!A4:E9"],
+['builds',"'Build Snapshots'!A1:S100"],
+['buildArtifacts',"'Build Artifacts'!A1:I260"]
 ];
-const state={data:null,lastSync:null,source:'none',working:false,error:'',selected:0,search:'',filter:'all',stockSearch:'',fieldSearch:'',stockShow:60,resinFilter:'active',characterSearch:'',characterLevel:'all',characterElement:'all',characterSort:'name'};
+const state={data:null,lastSync:null,source:'none',working:false,error:'',selected:0,search:'',filter:'all',stockSearch:'',fieldSearch:'',stockShow:60,resinFilter:'active',characterSearch:'',characterLevel:'all',characterElement:'all',characterSort:'name',selectedCharacter:'Aino'};
 const esc=v=>String(v===null||v===undefined?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const val=v=>String(v===null||v===undefined?'':v).trim();
 const num=v=>{const x=Number(val(v).replace(/,/g,''));return v===undefined||v===null||val(v)===''||!Number.isFinite(x)?null:x};
@@ -32,10 +34,12 @@ function parse(values){
  const inventory=res.inventory.slice(1).filter(r=>r[0]).map(r=>({key:val(r[0]),planning:num(r[1]),scan:num(r[2])}));
  const field=res.field.slice(1).filter(r=>r[1]&&r[2]).map(r=>({priority:num(r[0]),goal:val(r[1]),task:val(r[2]),material:val(r[3]),required:num(r[4]),stock:num(r[5]),needed:num(r[6]),type:val(r[7]),method:val(r[8]),progress:val(r[9])}));
  const characters=res.characters.slice(1).filter(r=>r[0]).map(r=>({name:val(r[0]),level:val(r[1]),asc:val(r[2]),cons:val(r[3]),na:val(r[4]),skill:val(r[5]),burst:val(r[6])}));
+ const builds=res.builds.slice(1).filter(r=>r[0]).map(r=>({key:val(r[0]),date:val(r[1]),source:val(r[2]),weapon:val(r[3]),weaponLevel:num(r[4]),refinement:num(r[5]),artifactCount:num(r[6]),setSummary:val(r[7]),equipmentStatus:val(r[8]),reportDate:val(r[9]),reportedWeapon:val(r[10]),reportedWeaponLevel:num(r[11]),reportedRefinement:num(r[12]),reportedLevel:num(r[13]),reportedCons:num(r[14]),reportedTalents:val(r[15]),reportedArtifacts:val(r[16]),note:val(r[17]),provenance:val(r[18])}));
+ const buildArtifacts=res.buildArtifacts.slice(1).filter(r=>r[0]&&r[1]).map(r=>({key:val(r[0]),slot:val(r[1]),set:val(r[2]),main:val(r[3]),level:num(r[4]),substats:val(r[5]),date:val(r[6]),source:val(r[7]),id:val(r[8])}));
  const dashboard=res.dashboard;
  const counters={};for(const r of dashboard){if(r[0]&&r[1])counters[val(r[0])]=num(r[1]);if(r[3]&&r[4])counters[val(r[3])]=num(r[4]);}
  if(!priorities.length||!projects.length)throw Error('Cannot identify active farming project queue; no data changed.');
- return {priorities,projects,requirements,inventory,field,characters,counters};
+ return {priorities,projects,requirements,inventory,field,characters,builds,buildArtifacts,counters};
 }
 function load(){
  try{const c=JSON.parse(localStorage.getItem(STORAGE)||'null');if(c?.data&&Array.isArray(c.data.priorities)){state.data=c.data;state.lastSync=c.when||null;state.source='cache'}}catch(e){}
@@ -173,13 +177,14 @@ function characters(){
  const count='<div class="farm-roster-results"><span><strong>'+fmt(items.length)+'</strong> of '+fmt(d.characters.length)+' characters'+(active?' match your filters':' in the roster')+'</span>'+(active?'<button class="farm-clear-filters" data-farm-roster-clear="1" type="button">Clear filters ×</button>':'')+'</div>';
  const cards=items.length?items.map(c=>{
   const e=characterElement(c.name),className=e.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-  return '<div class="farm-char">'+portrait(c.name)+'<div class="farm-char-main"><h3>'+esc(displayCharacter(c.name))+'</h3><span class="farm-element '+className+'">'+esc(e)+'</span><p>Lv '+esc(c.level||'Unknown')+' · C'+esc(c.cons||'?')+' · Asc '+esc(c.asc||'?')+'</p><span>Talents '+esc([c.na,c.skill,c.burst].join(' / '))+'</span></div></div>';
+  const record=(d.builds||[]).find(b=>b.key.toLowerCase().replace(/[^a-z0-9]/g,'')===c.name.toLowerCase().replace(/[^a-z0-9]/g,''));
+  return '<button type="button" class="farm-char farm-char-link" data-farm-dossier="'+esc(c.name)+'">'+portrait(c.name)+'<div class="farm-char-main"><h3>'+esc(displayCharacter(c.name))+'</h3><span class="farm-element '+className+'">'+esc(e)+'</span><p>Lv '+esc(record?.reportedLevel??c.level??'Unknown')+' · C'+esc(record?.reportedCons??c.cons??'?')+' · Asc '+esc(c.asc||'?')+'</p><span>Talents '+esc(record?.reportedTalents||[c.na,c.skill,c.burst].join(' / '))+'</span><small class="farm-char-buildlink">View build & goals ›</small></div></button>';
  }).join(''):'<div class="farm-empty farm-roster-empty">No characters match these filters. Try another level or element, or clear the filters.</div>';
  return '<div class="farm-surface">'+head('CHARACTER READINESS','Character Roster','Find characters by level and element, or sort by their last documented level.')+connectBanner()
  +filters+count+'<div class="farm-character-grid">'+cards+'</div><p class="farm-fineprint">Character levels are based on the source roster scan; some upgrades may be newer than those values. Element assignments come from the official character catalogue. The Google Sheet remains unchanged.</p></div>';
 }
 function render(page){
- let html=page==='farm-projects'?projects():page==='farm-materials'?materials():page==='farm-resin'?resin():page==='farm-field'?field():page==='farm-characters'?characters():overview();
+ let html=page==='farm-projects'?projects():page==='farm-materials'?materials():page==='farm-resin'?resin():page==='farm-field'?field():page==='farm-characters'?characters():page==='farm-profile'?window.FarmingBuildDossiers.renderProfile(state.selectedCharacter,state.data||{characters:[],projects:[],requirements:[],builds:[],buildArtifacts:[]},{displayCharacter,portrait,characterElement}):overview();
  const nav=[['farming','Command Centre'],['farm-projects','Projects'],['farm-materials','Inventory'],['farm-resin','Resin Planner'],['farm-field','Fieldwork'],['farm-characters','Characters']];
  return '<section class="farm-root"><div class="farm-deptbar"><span>💸 BANKRUPTCY ARCHIVES</span><small>FARMING OPERATIONS · READ-ONLY MASTER SYNC</small><a href="'+SOURCE+'" target="_blank" rel="noopener noreferrer">Open Source Sheet ↗</a></div><nav class="farm-subnav">'+nav.map(([id,label])=>'<button type="button" class="'+(page===id?'selected':'')+'" data-farm-nav="'+id+'">'+label+'</button>').join('')+'</nav>'+html+'</section>';
 }
@@ -222,10 +227,13 @@ function connect(){
 function refresh(){const nav=window.BankruptcyArchives?.currentPage?.();if(nav&&nav.startsWith('farm'))window.BankruptcyArchives?.render?.();else if(nav==='archives')window.BankruptcyArchives?.render?.();}
 function maybeRefresh(){if(state.working)return;if(state.source==='none'&&freshToken())fetchSync(freshToken());}
 document.addEventListener('click',e=>{
+ const dossier=e.target.closest('[data-farm-dossier]');if(dossier){state.selectedCharacter=dossier.dataset.farmDossier;window.BankruptcyArchives?.navigate?.('farm-profile');return}
+ if(e.target.closest('[data-farm-profile-back]')){window.BankruptcyArchives?.navigate?.('farm-characters');return}
+ const openProfile=e.target.closest('[data-open-character]');if(openProfile){window.BankruptcyArchives?.navigate?.('profile',{character:openProfile.dataset.openCharacter});return}
  const nav=e.target.closest('[data-farm-nav]');if(nav){state.search='';window.BankruptcyArchives?.navigate?.(nav.dataset.farmNav);return}
  if(e.target.closest('[data-farm-sync]')){connect();return}
  if(e.target.closest('[data-farm-roster-clear]')){state.characterSearch='';state.characterLevel='all';state.characterElement='all';state.characterSort='name';refresh();return}
- const character=e.target.closest('[data-farm-character]');if(character){const aliases={'Kaedehara Kazuha':'Kazuha','Raiden Shogun':'Raiden','Tartaglia':'Childe','Yumemizuki Mizuki':'Mizuki'};state.search=aliases[character.dataset.farmCharacter]||character.dataset.farmCharacter;window.BankruptcyArchives?.navigate?.('farm-projects');return}
+ const character=e.target.closest('[data-farm-character]');if(character){const aliases={'Kaedehara Kazuha':'Kazuha','Raiden Shogun':'Raiden','Tartaglia':'Childe','Yumemizuki Mizuki':'Mizuki'};state.selectedCharacter=aliases[character.dataset.farmCharacter]||character.dataset.farmCharacter;window.BankruptcyArchives?.navigate?.('farm-profile');return}
  const item=e.target.closest('[data-farm-item]');if(item){state.selected=num(item.dataset.farmItem);window.BankruptcyArchives?.navigate?.('farm-projects');return}
  if(e.target.closest('[data-farm-more]')){state.stockShow+=100;refresh();return}
 });
@@ -236,6 +244,19 @@ document.addEventListener('input',e=>{
  if(id==='farmSearch')state.search=value;else if(id==='farmFieldSearch')state.fieldSearch=value;else if(id==='farmCharacterSearch')state.characterSearch=value;else state.stockSearch=value;
  refresh();const node=document.getElementById(id);if(node){node.focus();try{node.setSelectionRange(pos,pos)}catch(e){}}
 });
-document.addEventListener('change',e=>{if(e.target.id==='farmFilter'){state.filter=e.target.value;refresh()}if(e.target.id==='farmResinFilter'){state.resinFilter=e.target.value;refresh()}if(e.target.id==='farmCharacterLevel'){state.characterLevel=e.target.value;refresh()}if(e.target.id==='farmCharacterElement'){state.characterElement=e.target.value;refresh()}if(e.target.id==='farmCharacterSort'){state.characterSort=e.target.value;refresh()}});
+document.addEventListener('change',async e=>{
+ if(e.target.id==='farmGoodFile'){
+  const f=e.target.files?.[0];if(!f)return;
+  try{
+   if(f.size>4500000)throw Error('File is too large for local build import.');
+   const text=await f.text();
+   const data=JSON.parse(text);
+   const stats=window.FarmingBuildDossiers.importGood(data,f.name);
+   state.error='';
+   refresh();
+  }catch(err){const node=document.getElementById('farmGoodMessage');if(node)node.textContent='Import failed: '+String(err.message||err);}
+  return;
+ }
+ if(e.target.id==='farmFilter'){state.filter=e.target.value;refresh()}if(e.target.id==='farmResinFilter'){state.resinFilter=e.target.value;refresh()}if(e.target.id==='farmCharacterLevel'){state.characterLevel=e.target.value;refresh()}if(e.target.id==='farmCharacterElement'){state.characterElement=e.target.value;refresh()}if(e.target.id==='farmCharacterSort'){state.characterSort=e.target.value;refresh()}});
 window.FarmingOperations={render,hub,sync:connect,maybeRefresh,getData:()=>state.data,getStatus:()=>({source:state.source,lastSync:state.lastSync}),getCharacterElement:characterElement};
 })();
