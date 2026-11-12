@@ -15,7 +15,7 @@ const tabs=[
 ['characters',"'Characters'!A4:G112"],
 ['dashboard',"'Dashboard'!A4:E9"]
 ];
-const state={data:null,lastSync:null,source:'none',working:false,error:'',selected:0,search:'',filter:'all',stockSearch:'',fieldSearch:'',stockShow:60,resinFilter:'active'};
+const state={data:null,lastSync:null,source:'none',working:false,error:'',selected:0,search:'',filter:'all',stockSearch:'',fieldSearch:'',stockShow:60,resinFilter:'active',characterSearch:'',characterLevel:'all',characterElement:'all',characterSort:'name'};
 const esc=v=>String(v===null||v===undefined?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const val=v=>String(v===null||v===undefined?'':v).trim();
 const num=v=>{const x=Number(val(v).replace(/,/g,''));return v===undefined||v===null||val(v)===''||!Number.isFinite(x)?null:x};
@@ -46,7 +46,14 @@ function statusChip(status){const s=lower(status);return '<span class="farm-stat
 function badge(tag,value,sub){return '<div class="farm-metric"><span>'+esc(tag)+'</span><strong>'+esc(value)+'</strong><small>'+esc(sub||'')+'</small></div>'}
 function head(ey,title,desc){return '<div class="farm-pagehead"><div class="farm-eyebrow">'+esc(ey)+'</div><h1>'+esc(title)+'</h1><p>'+esc(desc)+'</p></div>'}
 function connectBanner(){return '<div class="farm-connect"><span class="farm-connect-icon">☁</span><div><strong>'+(!state.data?'Connect your Farming Tracker':'Refresh Farming Tracker')+'</strong><p>Read the latest project priorities, material stock and resin-free objectives from your existing private Google Sheet. No spreadsheet edits or public dataset.</p><small>'+esc(statLabel())+(state.error?' · '+esc(state.error):'')+'</small></div><button type="button" class="farm-btn primary" data-farm-sync="1" '+(state.working?'disabled':'')+'>'+(state.working?'Syncing…':'☁ '+(state.data?'Refresh':'Connect Google'))+'</button></div>'}
-function portrait(name){const catalog=window.DPS_CHARACTER_CATALOG||[];const n=val(name).split(' — ')[0];const c=catalog.find(x=>lower(x.name)===lower(n));return c&&/^[a-z0-9_]+$/i.test(c.icon)?'<span class="farm-portrait"><img loading="lazy" src="https://enka.network/ui/'+c.icon+'.png" alt="" onerror="this.style.display=\'none\'"></span>':'<span class="farm-portrait">'+esc(n.slice(0,1))+'</span>'}
+const normalizeCharacter=v=>lower(v).replace(/[^a-z0-9]/g,'');
+function characterRecord(name){
+ const n=val(name).split(' — ')[0];
+ return (window.DPS_CHARACTER_CATALOG||[]).find(c=>normalizeCharacter(c.name)===normalizeCharacter(n))||null;
+}
+function characterElement(name){return characterRecord(name)?.element||'Unknown'}
+function displayCharacter(name){return characterRecord(name)?.name||val(name)}
+function portrait(name){const n=val(name).split(' — ')[0];const c=characterRecord(n);return c&&/^[a-z0-9_]+$/i.test(c.icon)?'<span class="farm-portrait"><img loading="lazy" src="https://enka.network/ui/'+c.icon+'.png" alt="" onerror="this.style.display=\'none\'"></span>':'<span class="farm-portrait">'+esc(n.slice(0,1))+'</span>'}
 function operationCard(){
  let best=null;try{const tests=window.DPSThrone?.getTests?.()||[];for(const t of tests){if(t.carry==='Skirk'&&Number(t.dps)>Number(best?.dps||0)&&Math.abs(Number(t.duration)-60)<0.01)best=t}}catch(e){}
  const record=best?fmt(best.dps)+' DPS':'Connect DPS to see the latest';
@@ -127,9 +134,49 @@ function field(){
 }
 function characters(){
  if(!state.data)return '<div class="farm-surface">'+head('CHARACTER READINESS','Character Roster','Connect to review the recorded character builds and levels.')+connectBanner()+'</div>';
- const d=state.data,items=d.characters.filter(c=>lower(c.name).includes(lower(state.search)));
- return '<div class="farm-surface">'+head('CHARACTER READINESS','Character Roster','Your last documented levels, constellations and talents. These values reflect the source scan, not guaranteed current builds.')+connectBanner()
- +'<div class="farm-filters"><input type="search" id="farmSearch" class="farm-input" aria-label="Search characters" placeholder="Find a character…" value="'+esc(state.search)+'"></div><div class="farm-character-grid">'+items.map(c=>'<div class="farm-char">'+portrait(c.name)+'<div><h3>'+esc(c.name)+'</h3><p>Lv '+esc(c.level)+' · C'+esc(c.cons)+' · Asc '+esc(c.asc)+'</p><span>Talents '+esc([c.na,c.skill,c.burst].join(' / '))+'</span></div></div>').join('')+'</div><p class="farm-fineprint">Character tab is a historical scan with later progress recorded elsewhere. For the latest verified upgrade, check Projects and its source evidence.</p></div>';
+ const d=state.data,knownLevels=[...new Set(d.characters.map(c=>num(c.level)).filter(x=>x!==null))].sort((a,b)=>b-a);
+ const levels=[
+  ['all','All levels'],['gte:80','Lv 80+'],['gte:70','Lv 70+'],['lt:40','Below Lv 40'],
+  ...knownLevels.map(n=>['eq:'+n,'Exactly Lv '+n])
+ ];
+ const elements=['all','Anemo','Cryo','Dendro','Electro','Geo','Hydro','Pyro','Multi-element','Unknown'];
+ const matchLevel=c=>{
+  const l=num(c.level),filter=state.characterLevel;
+  if(filter==='all')return true;
+  if(filter==='unknown')return l===null;
+  if(l===null)return false;
+  if(filter.startsWith('eq:'))return l===Number(filter.slice(3));
+  if(filter.startsWith('gte:'))return l>=Number(filter.slice(4));
+  if(filter.startsWith('lt:'))return l<Number(filter.slice(3));
+  return true;
+ };
+ const matches=d.characters.filter(c=>
+  lower(displayCharacter(c.name)+' '+c.name).includes(lower(state.characterSearch))
+  &&matchLevel(c)
+  &&(state.characterElement==='all'||characterElement(c.name)===state.characterElement)
+ );
+ const items=matches.slice().sort((a,b)=>{
+  const al=num(a.level)??-1,bl=num(b.level)??-1;
+  if(state.characterSort==='high')return bl-al||displayCharacter(a.name).localeCompare(displayCharacter(b.name));
+  if(state.characterSort==='low')return al-bl||displayCharacter(a.name).localeCompare(displayCharacter(b.name));
+  return displayCharacter(a.name).localeCompare(displayCharacter(b.name));
+ });
+ const select=(id,label,options,value)=>'<label class="farm-filter-label" for="'+id+'"><span>'+label+'</span><select id="'+id+'" class="farm-input">'+options.map(([v,t])=>'<option value="'+esc(v)+'"'+(v===value?' selected':'')+'>'+esc(t)+'</option>').join('')+'</select></label>';
+ const elementOpts=elements.filter(e=>e==='all'||d.characters.some(c=>characterElement(c.name)===e)).map(e=>[e,e==='all'?'All elements':e]);
+ const filters='<div class="farm-roster-filters">'
+ +'<label class="farm-filter-label farm-filter-search" for="farmCharacterSearch"><span>Search</span><input type="search" id="farmCharacterSearch" class="farm-input" aria-label="Search characters" placeholder="Find a character…" value="'+esc(state.characterSearch)+'"></label>'
+ +select('farmCharacterLevel','Level',levels,state.characterLevel)
+ +select('farmCharacterElement','Element',elementOpts,state.characterElement)
+ +select('farmCharacterSort','Sort by',[['name','Name A–Z'],['high','Highest level'],['low','Lowest level']],state.characterSort)
+ +'</div>';
+ const active=Boolean(state.characterSearch||state.characterLevel!=='all'||state.characterElement!=='all'||state.characterSort!=='name');
+ const count='<div class="farm-roster-results"><span><strong>'+fmt(items.length)+'</strong> of '+fmt(d.characters.length)+' characters'+(active?' match your filters':' in the roster')+'</span>'+(active?'<button class="farm-clear-filters" data-farm-roster-clear="1" type="button">Clear filters ×</button>':'')+'</div>';
+ const cards=items.length?items.map(c=>{
+  const e=characterElement(c.name),className=e.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  return '<div class="farm-char">'+portrait(c.name)+'<div class="farm-char-main"><h3>'+esc(displayCharacter(c.name))+'</h3><span class="farm-element '+className+'">'+esc(e)+'</span><p>Lv '+esc(c.level||'Unknown')+' · C'+esc(c.cons||'?')+' · Asc '+esc(c.asc||'?')+'</p><span>Talents '+esc([c.na,c.skill,c.burst].join(' / '))+'</span></div></div>';
+ }).join(''):'<div class="farm-empty farm-roster-empty">No characters match these filters. Try another level or element, or clear the filters.</div>';
+ return '<div class="farm-surface">'+head('CHARACTER READINESS','Character Roster','Find characters by level and element, or sort by their last documented level.')+connectBanner()
+ +filters+count+'<div class="farm-character-grid">'+cards+'</div><p class="farm-fineprint">Character levels are based on the source roster scan; some upgrades may be newer than those values. Element assignments come from the official character catalogue. The Google Sheet remains unchanged.</p></div>';
 }
 function render(page){
  let html=page==='farm-projects'?projects():page==='farm-materials'?materials():page==='farm-resin'?resin():page==='farm-field'?field():page==='farm-characters'?characters():overview();
@@ -177,17 +224,18 @@ function maybeRefresh(){if(state.working)return;if(state.source==='none'&&freshT
 document.addEventListener('click',e=>{
  const nav=e.target.closest('[data-farm-nav]');if(nav){state.search='';window.BankruptcyArchives?.navigate?.(nav.dataset.farmNav);return}
  if(e.target.closest('[data-farm-sync]')){connect();return}
+ if(e.target.closest('[data-farm-roster-clear]')){state.characterSearch='';state.characterLevel='all';state.characterElement='all';state.characterSort='name';refresh();return}
  const character=e.target.closest('[data-farm-character]');if(character){const aliases={'Kaedehara Kazuha':'Kazuha','Raiden Shogun':'Raiden','Tartaglia':'Childe','Yumemizuki Mizuki':'Mizuki'};state.search=aliases[character.dataset.farmCharacter]||character.dataset.farmCharacter;window.BankruptcyArchives?.navigate?.('farm-projects');return}
  const item=e.target.closest('[data-farm-item]');if(item){state.selected=num(item.dataset.farmItem);window.BankruptcyArchives?.navigate?.('farm-projects');return}
  if(e.target.closest('[data-farm-more]')){state.stockShow+=100;refresh();return}
 });
 document.addEventListener('input',e=>{
  let id=e.target.id;
- if(!['farmSearch','farmFieldSearch','farmInventorySearch'].includes(id))return;
+ if(!['farmSearch','farmFieldSearch','farmInventorySearch','farmCharacterSearch'].includes(id))return;
  const value=e.target.value,pos=e.target.selectionStart;
- if(id==='farmSearch')state.search=value;else if(id==='farmFieldSearch')state.fieldSearch=value;else state.stockSearch=value;
+ if(id==='farmSearch')state.search=value;else if(id==='farmFieldSearch')state.fieldSearch=value;else if(id==='farmCharacterSearch')state.characterSearch=value;else state.stockSearch=value;
  refresh();const node=document.getElementById(id);if(node){node.focus();try{node.setSelectionRange(pos,pos)}catch(e){}}
 });
-document.addEventListener('change',e=>{if(e.target.id==='farmFilter'){state.filter=e.target.value;refresh()}if(e.target.id==='farmResinFilter'){state.resinFilter=e.target.value;refresh()}});
-window.FarmingOperations={render,hub,sync:connect,maybeRefresh,getData:()=>state.data,getStatus:()=>({source:state.source,lastSync:state.lastSync})};
+document.addEventListener('change',e=>{if(e.target.id==='farmFilter'){state.filter=e.target.value;refresh()}if(e.target.id==='farmResinFilter'){state.resinFilter=e.target.value;refresh()}if(e.target.id==='farmCharacterLevel'){state.characterLevel=e.target.value;refresh()}if(e.target.id==='farmCharacterElement'){state.characterElement=e.target.value;refresh()}if(e.target.id==='farmCharacterSort'){state.characterSort=e.target.value;refresh()}});
+window.FarmingOperations={render,hub,sync:connect,maybeRefresh,getData:()=>state.data,getStatus:()=>({source:state.source,lastSync:state.lastSync}),getCharacterElement:characterElement};
 })();
