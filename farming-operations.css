@@ -263,3 +263,7 @@ body.farming-mode .sidebar .divider-line,body.archive-mode .sidebar .divider-lin
 @media(max-width:1200px){.farm-artifact-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:780px){.farm-artifact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.farm-build-goal-list{grid-template-columns:1fr}}
 @media(max-width:560px){.farm-dossier-hero{padding:16px;gap:13px}.farm-dossier-hero>.farm-portrait{width:68px;height:68px;font-size:29px}.farm-dossier-metrics{grid-template-columns:1fr 1fr}.farm-dossier-metrics .farm-build-stat:last-child{grid-column:1/-1}.farm-build-section{padding:15px}.farm-artifact-grid{grid-template-columns:1fr}.farm-artifact{min-height:0}.farm-build-heading{flex-wrap:wrap}.farm-build-provenance{text-align:left}.farm-weapon-card{padding:12px}.farm-import-button{width:100%;justify-content:center}}
+
+.farm-build-goal-note{font-size:11px;color:#82937e;line-height:1.6;margin-top:11px;padding-top:9px;border-top:1px dashed #dbe9da}
+.farm-build-goal .farm-status.later{white-space:nowrap}
+.farm-char-main .farm-char-buildlink{display:inline-block}
