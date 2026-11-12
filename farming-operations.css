@@ -302,3 +302,22 @@ body.farming-mode .sidebar .divider-line,body.archive-mode .sidebar .divider-lin
  .farm-artifact-set{gap:12px}
  .farm-table-wrap .farm-resource-label{min-width:122px}
 }
+
+/* Clean, readable artifact substats: four label/value tiles instead of raw GOOD strings. */
+.farm-substats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:13px}
+.farm-substat{min-width:0;display:flex;flex-direction:column;gap:4px;padding:9px 10px;background:#f0f6ef;border:1px solid #e0ecdf;border-radius:9px}
+.farm-substat-name{display:block;color:#738b7a;font-size:10px;font-weight:700;line-height:1.35;overflow-wrap:normal}
+.farm-substat-value{display:block;color:#426c54;font-size:14px;font-weight:850;letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1.3;white-space:nowrap}
+@media(min-width:1201px){
+ /* A five-column artifact gallery leaves less room per card. */
+ .farm-substats{grid-template-columns:minmax(0,1fr)}
+ .farm-substat{flex-direction:row;align-items:center;justify-content:space-between;gap:5px;padding:7px 8px}
+ .farm-substat-value{font-size:12px}
+}
+@media(max-width:560px){
+ /* On phones each artifact occupies the full width; use a balanced 2×2 grid. */
+ .farm-substats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:15px}
+ .farm-substat{padding:11px 12px}
+ .farm-substat-name{font-size:11px}
+ .farm-substat-value{font-size:15px}
+}
