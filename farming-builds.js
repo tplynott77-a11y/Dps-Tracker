@@ -18,6 +18,9 @@ const mainStat=x=>{
  return name(k);
 };
 const fmt=n=>n===null||n===undefined||n===''?'—':Number(n).toLocaleString('en-IE');
+function gameIcon(kind,key,slot='',size='md'){
+ return window.FarmingGameIcons?.tag?.(kind,key,{slot,size,title:name(key)})||'<span class="farm-game-icon '+size+'">✦</span>';
+}
 const validLevel=n=>Number.isFinite(Number(n))&&n!==''&&n!==null&&n!==undefined?Number(n):null;
 const canon=k=>norm(k).replace(/^travelercyo$/,'travelercryo');
 function same(a,b){
@@ -96,12 +99,12 @@ function renderProfile(key,d,utils){
   const a=artifactMap.get(slot);
   if(!a)return '<div class="farm-artifact empty"><div class="farm-artifact-label">'+slotLabel+'</div><div class="farm-artifact-none">'+(b.verifiedEmpty?'None equipped in scan':'Not recorded in available scan')+'</div></div>';
   const sub=Array.isArray(a.substats)?a.substats.map(x=>Array.isArray(x)?[mainStat(x[0]),x[1]].join(' '):x).join(' · '):val(a.substats);
-  return '<div class="farm-artifact"><div class="farm-artifact-label">'+slotLabel+' <span>+'+esc(a.level??'?')+'</span></div><strong>'+esc(name(a.set))+'</strong><div class="farm-artifact-main">'+esc(mainStat(a.main))+'</div>'+(sub&&sub!=='Not transcribed from available extract'?'<small>'+esc(sub)+'</small>':'')+'</div>';
+  return '<div class="farm-artifact"><div class="farm-artifact-label">'+slotLabel+' <span>+'+esc(a.level??'?')+'</span></div><div class="farm-artifact-set">'+gameIcon('artifact',a.set,slot,'lg')+'<strong>'+esc(name(a.set))+'</strong></div><div class="farm-artifact-main">'+esc(mainStat(a.main))+'</div>'+(sub&&sub!=='Not transcribed from available extract'?'<small>'+esc(sub)+'</small>':'')+'</div>';
  }).join('');
  const active=goals.filter(g=>val(g.status).toLowerCase()==='active').length,done=goals.filter(g=>val(g.status).toLowerCase()==='done').length;
  const goalList=goals.length?goals.map(g=>{
   const related=(d.requirements||[]).filter(x=>x.goal===g.goal&&x.needed>0&&val(g.status).toLowerCase()!=='done');
-  return '<article class="farm-build-goal"><div class="farm-build-goal-head"><strong>'+esc(g.goal)+'</strong><span class="farm-status '+(val(g.status).toLowerCase()==='active'?'active':val(g.status).toLowerCase()==='done'?'done':'later')+'">'+esc(g.status)+'</span></div><p>'+esc(g.target||'')+'</p><small>'+esc(g.kind==='build'?(g.source+' · '+g.date):g.focus||'')+'</small>'+(g.kind==='build'&&g.note?'<div class="farm-build-goal-note">'+esc(g.note)+'</div>':'')+(related.length?'<div class="farm-goal-shortages">'+related.length+' recorded shortage line'+(related.length===1?'':'s')+': '+esc(related.slice(0,3).map(x=>name(x.material)).join(' · '))+(related.length>3?'…':'')+'</div>':'')+'</article>';
+  return '<article class="farm-build-goal"><div class="farm-build-goal-head"><strong>'+esc(g.goal)+'</strong><span class="farm-status '+(val(g.status).toLowerCase()==='active'?'active':val(g.status).toLowerCase()==='done'?'done':'later')+'">'+esc(g.status)+'</span></div><p>'+esc(g.target||'')+'</p><small>'+esc(g.kind==='build'?(g.source+' · '+g.date):g.focus||'')+'</small>'+(g.kind==='build'&&g.note?'<div class="farm-build-goal-note">'+esc(g.note)+'</div>':'')+(related.length?'<div class="farm-goal-shortages">'+related.length+' recorded shortage line'+(related.length===1?'':'s')+': '+related.slice(0,3).map(x=>'<span class="farm-goal-material">'+gameIcon('material',x.material,'','xs')+esc(name(x.material))+'</span>').join('')+(related.length>3?'…':'')+'</div>':'')+'</article>';
  }).join(''):'<div class="farm-empty">No individual goals are currently listed for this character in Projects.</div>';
  const hasWeapon=Boolean(b.weapon),scanLabel=b.scanDate?'Equipment scan: '+b.scanDate:'No dated full equipment scan';
  const portrait=utils.portrait(key);
@@ -109,7 +112,7 @@ function renderProfile(key,d,utils){
  +'<div class="farm-dossier-hero">'+portrait+'<div><div class="farm-eyebrow">CHARACTER BUILD DOSSIER</div><h1>'+esc(label)+'</h1><p>'+esc(scanLabel)+' · '+esc(b.scanSource)+'</p><div class="farm-dossier-tags"><span>Lv '+esc(level||'Not recorded')+'</span><span>C'+esc(cons??'?')+'</span><span>'+esc(utils.characterElement(key))+'</span></div></div></div>'
  +'<div class="farm-dossier-metrics">'+statRow('Talents (A/E/Q)',talents||'Not recorded')+statRow('Recorded artifact slots',b.verifiedEmpty?'0 / 5':verifiedPieces+' / 5')+statRow('Goals tracked',fmt(goals.length)+' ('+active+' active, '+done+' done)')+'</div>'
  +'<section class="farm-build-section"><div class="farm-build-heading"><div><div class="farm-eyebrow">LAST KNOWN LOADOUT</div><h2>Equipment</h2></div><span class="farm-build-provenance">'+esc(b.reportDate?'Updated report '+b.reportDate:scanLabel)+'</span></div>'
- +'<div class="farm-weapon-card"><div class="farm-weapon-symbol">⚔</div><div><small>Equipped weapon · last documented</small><strong>'+esc(hasWeapon?name(b.weapon):'Not recorded')+'</strong><span>'+(hasWeapon?'Lv '+esc(b.weaponLevel??'?')+' · R'+esc(b.refinement??'?'):'No equipped weapon verified')+'</span></div></div>'
+ +'<div class="farm-weapon-card"><div class="farm-weapon-symbol">'+(hasWeapon?gameIcon('weapon',b.weapon,'','lg'):'⚔')+'</div><div><small>Equipped weapon · last documented</small><strong>'+esc(hasWeapon?name(b.weapon):'Not recorded')+'</strong><span>'+(hasWeapon?'Lv '+esc(b.weaponLevel??'?')+' · R'+esc(b.refinement??'?'):'No equipped weapon verified')+'</span></div></div>'
  +'<div class="farm-build-heading"><h3>Artifact slots</h3><small>'+verifiedPieces+' slots documented in '+(b.scanDate?'dated scans':'available data')+'</small></div>'
  +'<div class="farm-artifact-grid">'+artifactView+'</div>'
  +(b.reportArtifacts?'<p class="farm-build-report"><strong>Newer artifact report:</strong> '+esc(b.reportArtifacts)+'</p>':'')
