@@ -25,6 +25,27 @@
 .sync-label{margin-bottom:8px!important}
 @media(max-width:780px){.sync-button{padding:8px!important}.top-actions{gap:6px}}
 @media(max-width:480px){.sync-button{font-size:0!important;min-width:39px}.sync-button::before{content:'☁';font-size:17px}}
+
+/* Official Genshin in-game character portraits — no fan art */
+.portrait-avatar{position:relative!important;display:inline-flex!important;align-items:center;justify-content:center;overflow:hidden;isolation:isolate;background:radial-gradient(circle at 45% 12%,rgba(255,255,255,.18),transparent 72%),var(--av,#4b7cb1)!important;border:1px solid rgba(239,215,169,.35)!important;vertical-align:middle;flex-shrink:0}
+.portrait-avatar .avatar-initials{position:relative;z-index:0;font-size:inherit;font-weight:800}
+.portrait-avatar .character-icon{width:100%;height:100%;object-fit:cover;object-position:center 22%;position:absolute;inset:0;z-index:1;border-radius:inherit}
+.portrait-avatar.image-failed .character-icon{display:none}
+.roster-intro{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:14px;margin:22px 0 30px}
+.roster-card{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:9px;min-width:0;padding:20px 9px 15px;border:1px solid #2c3b53;border-radius:15px;background:linear-gradient(145deg,#1b283c,#101928);color:var(--text);transition:transform .16s,border-color .16s,background .16s}
+.roster-card:hover,.roster-card:focus-visible{transform:translateY(-3px);border-color:#c7a368;background:linear-gradient(145deg,#24344e,#151f30)}
+.roster-card .avatar{width:86px!important;height:86px!important;border-radius:18px!important;font-size:30px}
+.roster-card .character-name{font-size:12px;font-weight:800;line-height:1.35;overflow-wrap:anywhere;min-height:30px}
+.roster-card .character-sub{font-size:11px;color:#9dafca}
+.roster-card .tested{color:#dfc28a}
+.roster-card .untested{color:#8293ac}
+.roster-info{font-size:12px;color:#8c9db8}
+.duel-title{display:flex;gap:12px;align-items:center;margin:8px 0 12px}
+.duel-title h3{margin:0}
+.profile-summary .portrait-avatar{border-radius:19px}
+.roster-select{min-width:140px}
+@media(max-width:780px){.roster-grid{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:10px}.roster-card{padding:13px 7px}.roster-card .avatar{width:72px!important;height:72px!important}.roster-card .character-name{font-size:11px}}
 </style>
 </head>
 <body>
@@ -35,6 +56,7 @@
     <nav id="nav">
       <button class="nav-link active" data-page="home"><span class="nav-icon">♛</span> Throne Room <span class="nav-tip">⌘1</span></button>
       <button class="nav-link" data-page="archive"><span class="nav-icon">▤</span> Test Archive <span class="nav-tip">⌘2</span></button>
+      <button class="nav-link" data-page="gallery"><span class="nav-icon">▦</span> All Characters</button>
       <button class="nav-link" data-page="champions"><span class="nav-icon">◈</span> Champions <span class="nav-tip">⌘3</span></button>
       <button class="nav-link" data-page="duels"><span class="nav-icon">⚔</span> Duel Lab <span class="nav-tip">⌘4</span></button>
       <button class="nav-link" data-page="protocol"><span class="nav-icon">◇</span> Test Protocol <span class="nav-tip">⌘5</span></button>
@@ -43,7 +65,7 @@
       <div class="tiny-label">SOURCE ARCHIVE</div>
       <a class="source-link" href="https://docs.google.com/spreadsheets/d/1538QSbADzZf0p76qvC1dhhMk8RYO74I51l9G7nQSq_s/edit" target="_blank" rel="noopener">Original Google Sheet ↗</a>
       <div class="divider-line"></div>
-      <span class="version">THE BANKRUPTCY ARCHIVES • v2.0</span>
+      <span class="version">THE BANKRUPTCY ARCHIVES • v3.0</span>
     </div>
   </aside>
   <div class="main-shell">
@@ -55,6 +77,7 @@
 <input type="file" id="fileInput" accept=".json,.csv,application/json,text/csv" hidden/>
 <div id="modalRoot" aria-live="polite"></div>
 <div id="toastRoot" role="status" aria-live="polite"></div>
+<script src="character-art.js"></script>
 <script>window.DPS_SEED = []; // Private records load only after authorised Google Sheets sign-in.
 </script>
 <script>/* The DPS Throne — an offline-first, user-editable personal archive. */
@@ -70,7 +93,19 @@ const n=v=>v===null||v===''||v===undefined?null:Number.isFinite(Number(v))?Numbe
 const initials=name=>String(name??'?').split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
 const pastel=['#4b7cb1','#7373bd','#8b6bb3','#5d9b94','#927ba7','#8e7864','#a75c68','#597fa6','#7474b5'];
 const av=name=>pastel[[...String(name)].reduce((acc,c)=>acc+c.charCodeAt(0),0)%pastel.length];
-const avatar=(name,mini=false)=>`<span class="${mini?'mini-avatar':'avatar'}" style="--av:${av(name)}">${esc(initials(name))}</span>`;
+const catalog=Array.isArray(window.DPS_CHARACTER_CATALOG)?window.DPS_CHARACTER_CATALOG:[];
+const charKey=v=>String(v??'').trim().toLowerCase().replace(/\s+/g,' ');
+const artMap=new Map(catalog.map(c=>[charKey(c.name),c]));
+const aliases={'traveler':'aether','traveller':'aether','childe':'tartaglia','bennet':'bennett'};
+const findArt=name=>artMap.get(aliases[charKey(name)]||charKey(name))||null;
+const avatar=(name,mini=false)=>{
+  const frame=mini?'mini-avatar':'avatar',art=findArt(name),letters=esc(initials(name));
+  const outer='<span class="'+frame+' portrait-avatar" style="--av:'+av(name)+'"><span class="avatar-initials">'+letters+'</span>';
+  if(!art||!/^[A-Za-z0-9_]+$/.test(art.icon))return outer+'</span>';
+  const src='https://enka.network/ui/'+art.icon+'.png';
+  const side=/^[A-Za-z0-9_]+$/.test(art.side||'')?'https://enka.network/ui/'+art.side+'.png':'';
+  return outer+'<img class="character-icon" loading="lazy" decoding="async" alt="" src="'+esc(src)+'" data-side="'+esc(side)+'"></span>';
+};
 const standard=t=>Math.abs(Number(t.duration)-60)<.05||t.id==='MIT-00A';
 const qualified=t=>standard(t)&&n(t.dps)!==null;
 const num=t=>n(t?.dps)||0;
@@ -123,6 +158,13 @@ function detail(id){const t=tests.find(x=>x.id===id);if(!t)return;const markup=`
 function testForm(editId){const t=tests.find(x=>x.id===editId)||{},isEdit=Boolean(editId);const labels=[['id','Test ID *','text'],['date','Test date','date'],['carry','Carry / character *','text'],['constellation','Constellation','text'],['level','Character level','number'],['team','Team / test type','text'],['dps','Team DPS *','number'],['teamDamage','Total team damage','number'],['duration','Duration in seconds *','number'],['carryDamage','Personal carry damage','number'],['highestHit','Highest hit','number'],['support1','Support 1','text'],['support2','Support 2','text'],['support3','Support 3','text'],['talents','Talents (A/E/Q)','text'],['weapon','Weapon','text'],['evidence','Evidence','text'],['verification','Verification','select']];let form=labels.map(([key,label,type])=>`<div class="field ${key==='weapon'||key==='team'?'span2':''}"><label for="f_${key}">${esc(label)}</label>${type==='select'?`<select class="select" name="${key}" id="f_${key}">${['Screenshot-confirmed','User-reported','Estimated','Needs verification'].map(v=>`<option ${v===(t[key]||'User-reported')?'selected':''}>${v}</option>`).join('')}</select>`:`<input class="input" id="f_${key}" name="${key}" ${key==='id'&&isEdit?'readonly':''} type="${type}" ${type==='number'?'step="any"':''} value="${esc(t[key]??'')}" ${['id','carry','dps','duration'].includes(key)?'required':''}/>`}</div>`).join('');$('#modalRoot').innerHTML=`<div class="modal-backdrop" data-close="1"><form id="testForm" class="modal" role="dialog" aria-modal="true"><div class="modal-head"><h2>${isEdit?'Edit Combat Record':'Record a New Test'}</h2><button type="button" class="icon-btn" data-close="1">×</button></div><div class="form-grid">${form}<div class="field span3"><label for="f_notes">Conditions / observations</label><textarea class="textarea" name="notes" id="f_notes">${esc(t.notes||'')}</textarea></div></div><div class="note">Edits save locally in this browser. Back up with Export. Results with nonstandard timing are excluded from the official rankings, except approved exceptions.</div><div class="form-actions" style="margin-top:16px">${isEdit?`<button type="button" class="btn btn-danger" data-delete="${esc(editId)}">Delete</button>`:''}<button type="button" class="btn btn-secondary" data-close="1">Cancel</button><button class="btn btn-gold" type="submit">${isEdit?'Save Changes':'Record Test'}</button></div></form></div>`;$('#testForm').addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(e.currentTarget),vals=Object.fromEntries(fd.entries());for(const k of ['dps','duration','level','teamDamage','carryDamage','highestHit'])vals[k]=n(vals[k]);vals.id=vals.id?.trim();vals.carry=vals.carry?.trim();if(!vals.id||!vals.carry||!Number.isFinite(vals.dps)||!Number.isFinite(vals.duration)||vals.duration<=0){toast('Please enter a unique ID, character, valid DPS and duration.',true);return}if(!isEdit&&tests.some(x=>x.id===vals.id)){toast('Test ID already exists.',true);return}vals.carryShare=(vals.carryDamage!=null&&vals.teamDamage)?vals.carryDamage/vals.teamDamage:null;const pos=tests.findIndex(x=>x.id===vals.id);if(pos>=0)tests[pos]=vals;else tests.push(vals);save();$('#modalRoot').innerHTML='';toast('Test saved to this browser.');render()})}
 function download(name,content,mime){const blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500)}
 function parseCSV(txt){const result=[],rows=[];let cur='',row=[],quote=false;txt=txt.replace(/^\uFEFF/,'');for(let i=0;i<txt.length;i++){const c=txt[i];if(quote){if(c==='"'&&txt[i+1]==='"'){cur+='"';i++}else if(c==='"')quote=false;else cur+=c}else if(c==='"')quote=true;else if(c===','){row.push(cur);cur=''}else if(c==='\n'){row.push(cur.replace(/\r$/,''));rows.push(row);row=[];cur=''}else cur+=c}if(cur||row.length){row.push(cur);rows.push(row)}const h=rows.findIndex(r=>r.some(c=>c.trim()==='Test ID'));if(h<0)throw Error('Expected a Test Log CSV with a Test ID header.');const hdr=rows[h].map(x=>x.trim().toLowerCase()),col=k=>hdr.indexOf(k.toLowerCase()),get=(r,k)=>col(k)>=0?r[col(k)]:null;for(const r of rows.slice(h+1)){const id=get(r,'Test ID'),carry=get(r,'Carry');if(!id||!carry)continue;const d=get(r,'Test date');let date=null;if(/^\d{4}-\d\d-\d\d/.test(d||''))date=d.slice(0,10);else if(d){const z=new Date(d);if(!isNaN(z))date=z.toISOString().slice(0,10)}const t={id,date,carry,constellation:get(r,'Const.'),level:n(get(r,'Level')),team:get(r,'Team / test type'),dps:n(get(r,'Team DPS')),teamDamage:n(get(r,'Total team DMG')),duration:n(get(r,'Duration (s)')),carryDamage:n(get(r,'Carry DMG')),highestHit:n(get(r,'Highest hit')),support1:get(r,'Support 1'),support2:get(r,'Support 2'),support3:get(r,'Support 3'),talents:get(r,'Talents (A/E/Q)'),weapon:get(r,'Weapon'),notes:get(r,'Conditions / observations'),evidence:get(r,'Evidence'),verification:get(r,'Verification')||'User-reported'};t.carryShare=t.teamDamage&&t.carryDamage?t.carryDamage/t.teamDamage:null;result.push(t)}return result}
+document.addEventListener('error',e=>{
+  const img=e.target;
+  if(!(img instanceof HTMLImageElement)||!img.classList.contains('character-icon'))return;
+  if(!img.dataset.retried&&img.dataset.side){img.dataset.retried='yes';img.src=img.dataset.side;return}
+  img.closest('.portrait-avatar')?.classList.add('image-failed');
+  img.removeAttribute('src');
+},true);
 function render(){let html=page==='archive'?archive():page==='champions'?(champion?profile():champions()):page==='duels'?duels():page==='protocol'?protocol():home();if(innerWidth<=780)html=`<div class="mobile-nav">${[['home','♛ Throne'],['archive','▤ Archive'],['champions','◈ Champions'],['duels','⚔ Duel Lab'],['protocol','◇ Protocol']].map(([p,label])=>`<button data-go="${p}" class="${p===page?'active':''}">${label}</button>`).join('')}</div>`+html;$('#content').innerHTML=html}
 // State-aware controls keep the interface interactive without server access.
 document.addEventListener('click',e=>{const nav=e.target.closest('[data-page]');if(nav){champion='';q='';open(nav.dataset.page);return}const go=e.target.closest('[data-go]');if(go){champion='';q='';open(go.dataset.go);return}const ch=e.target.closest('[data-open-character]');if(ch){champion=ch.dataset.openCharacter;open('champions');return}const tr=e.target.closest('[data-test]');if(tr){detail(tr.dataset.test);return}const close=e.target.closest('[data-close]');if(close){$('#modalRoot').innerHTML='';return}const edit=e.target.closest('[data-edit]');if(edit){testForm(edit.dataset.edit);return}const del=e.target.closest('[data-delete]');if(del){if(confirm('Permanently remove this test from your local archive?')){tests=tests.filter(x=>x.id!==del.dataset.delete);save();$('#modalRoot').innerHTML='';toast('Test removed from local archive.');render()}return}const preset=e.target.closest('[data-duel-preset]');if(preset){[selectedA,selectedB]=preset.dataset.duelPreset.split('|');render();return}if(e.target.id==='prevPage'&&pageIndex>0){pageIndex--;render()}if(e.target.id==='nextPage'){pageIndex++;render()}if(e.target.id==='addButton'){testForm()}if(e.target.id==='importButton'){$('#fileInput').click()}if(e.target.id==='exportButton'){download('dps-throne-backup.json',JSON.stringify(tests,null,2),'application/json')}if(e.target.classList.contains('modal-backdrop'))$('#modalRoot').innerHTML=''});
