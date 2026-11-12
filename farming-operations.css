@@ -145,3 +145,24 @@ body.archive-mode .mobile-nav button.active,body.farming-mode .mobile-nav button
 .sidebar-bottom{flex:none;padding-top:7px}
 body.archive-mode .top-actions,body.farming-mode .top-actions{display:none}
 @media(max-width:780px){.sidebar{display:none}.archive-mode .topbar-inner,.farming-mode .topbar-inner{height:57px}}
+
+.farm-shortcut-actions{display:flex;gap:8px;flex-wrap:wrap}
+.farm-shortcut-actions .farm-btn{font-size:11px;padding:9px 12px}
+.farm-resin-caption{display:flex;align-items:center;font-size:12px;font-weight:800;color:#6b8778}
+.farm-activity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:13px}
+.farm-activity{border:1px solid #d7e6da;background:#fff;border-radius:14px;padding:18px}
+.farm-activity-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:13px}
+.farm-activity-top>span{color:#5c9872;background:#e5f2e8;padding:7px 9px;border-radius:8px}
+.farm-activity-top strong{color:#355b47;line-height:1.4;font-size:13px;flex:1}
+.farm-activity-top small{font-size:10px;color:#92a795}
+.farm-resin-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid #e7ede6;padding:11px 0}
+.farm-resin-row>div{min-width:0;flex:1}
+.farm-resin-row strong{display:block;color:#3c6350;font-size:12px;overflow-wrap:anywhere}
+.farm-resin-row small{display:block;color:#90a193;margin-top:3px;font-size:10px;line-height:1.55}
+.farm-resin-row>span{white-space:nowrap;font-size:11px}
+.farm-crosslink{border:1px solid #4e6c65;background:linear-gradient(110deg,#21382f,#152920);border-radius:12px;margin:12px 0 22px;padding:14px 17px;display:flex;align-items:center;gap:16px}
+.farm-crosslink span{color:#b8d8bf;font-size:12px;flex:1;line-height:1.55}
+.farm-crosslink button{border-color:#648d71;color:#cae7cd;background:#314d39;font-size:12px}
+.farm-crosslink button:hover{background:#456b4e}
+@media(max-width:1250px){.farm-detail{grid-row:1}.farm-project-layout>.farm-stack{grid-row:2}}
+@media(max-width:600px){.farm-activity-grid{grid-template-columns:1fr}.farm-crosslink{flex-wrap:wrap}.farm-crosslink button{width:100%}}
