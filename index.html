@@ -98,7 +98,73 @@
 .profile-record .note{margin-top:10px}
 @media(max-width:1100px){.profile-record-grid{grid-template-columns:1fr 1fr}.profile-record:last-child{grid-column:1/-1}}
 @media(max-width:680px){.profile-record-grid{grid-template-columns:1fr}.profile-record:last-child{grid-column:auto}.profile-record-desc{min-height:0}.profile-record{padding:16px}.profile-value{font-size:21px!important}}
-.dmg-person-link{background:transparent;border:0;color:inherit;padding:0;text-align:left;cursor:pointer;font-size:inherit;font-weight:inherit}.dmg-person-link:hover{color:var(--gold);text-decoration:underline}</style>
+.dmg-person-link{background:transparent;border:0;color:inherit;padding:0;text-align:left;cursor:pointer;font-size:inherit;font-weight:inherit}.dmg-person-link:hover{color:var(--gold);text-decoration:underline}
+/* Royal Chronicle v5 — responsive archive of dated leadership changes */
+.royal-hero{position:relative;display:flex;justify-content:space-between;align-items:center;overflow:hidden;min-height:178px;background:radial-gradient(circle at 80% 20%,#76592b55,transparent 52%),linear-gradient(120deg,#202338,#11192b 60%,#222027);border:1px solid #69573d;border-radius:17px;padding:28px;margin-top:24px}
+.royal-lead{display:flex;gap:17px;align-items:center;margin-top:12px;position:relative;z-index:1}
+.royal-lead .avatar{margin:0;width:72px;height:72px;min-width:72px;font-size:27px;border:1px solid #d7b76d}
+.royal-lead-name{font-family:'Cinzel',serif;color:#f4ddb0;font-size:23px;font-weight:800}
+.royal-lead-score{color:#f1c778;font-size:30px;font-weight:850;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.royal-lead-score span{font-size:11px;letter-spacing:.1em;font-weight:700}
+.royal-lead-sub{font-size:11px;color:#a8b5ce}
+.royal-crown{font:180px Georgia,serif;line-height:1;opacity:.18;transform:rotate(-12deg);color:#ffe2a7;position:absolute;right:40px;top:-14px;pointer-events:none}
+.royal-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:15px 0 30px}
+.royal-stat{display:flex;flex-direction:column;min-width:0;gap:4px;background:linear-gradient(155deg,#192236,#0f1725);border:1px solid #34425c;border-radius:13px;padding:17px}
+.royal-stat strong{font-family:'Cinzel',serif;font-size:28px;color:#f0c77f}
+.royal-stat span{font-size:12px;color:#e0e8f7;font-weight:800}
+.royal-stat small{font-size:10px;color:#8195b3}
+.royal-graphbox{padding:24px 25px 16px;border:1px solid #33415b;background:#111a2a;border-radius:14px;margin-bottom:22px}
+.royal-chart{width:100%;height:auto;display:block;max-height:310px}
+.royal-graphlabels{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:#8fa3be}
+.royal-challenger{padding:20px 24px;background:linear-gradient(145deg,#17283a,#111928);border:1px solid #344960;border-radius:14px;margin:19px 0 29px}
+.royal-challenger-body{display:flex;gap:13px;align-items:center;margin-top:13px}
+.royal-challenger-body .avatar{width:52px;height:52px;margin:0;flex-shrink:0}
+.royal-challenger-body>div:nth-child(2){display:flex;flex-direction:column;gap:3px;min-width:0}
+.royal-challenger-body>div:nth-child(2) strong{font-family:'Cinzel',serif;font-size:16px}
+.royal-challenger-body>div:nth-child(2) span{font-size:11px;color:#9cafc6}
+.royal-gap{display:flex;flex-direction:column;margin-left:auto;align-items:flex-end;white-space:nowrap}
+.royal-gap strong{font-size:22px;color:#ebc784}
+.royal-gap span{font-size:10px;color:#a1b3c9}
+.royal-challenger-foot{font-size:11px;color:#97a9c6;margin-top:13px}
+.royal-filter{display:flex;align-items:center;gap:11px;justify-content:flex-start;margin:0 0 18px;font-size:12px;color:#9cacc5}
+.royal-timeline{position:relative;display:grid;gap:14px;margin:0 0 22px 19px;padding-left:29px;border-left:2px solid #6f654e}
+.royal-event{position:relative;padding:19px;border:1px solid #37445f;background:linear-gradient(130deg,#1b2537,#111b2a);border-radius:14px;display:flex;gap:14px;min-width:0}
+.royal-event:before{content:'';position:absolute;left:-37px;top:28px;width:11px;height:11px;background:#c1a064;border:3px solid #1b2638;border-radius:50%;box-shadow:0 0 0 1px #958060}
+.royal-event.takeover{border-color:#bf965d;background:linear-gradient(115deg,#2b2933,#171e2c)}
+.royal-event.takeover:before{background:#f4d18b;box-shadow:0 0 15px #f1c77877}
+.royal-event.first{border-style:dashed}
+.royal-event-icon .mini-avatar{width:48px;height:48px;border-radius:12px;flex:none}
+.royal-event-body{min-width:0;flex:1}
+.royal-event-upper{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;font-size:10px;font-weight:900;letter-spacing:.11em}
+.royal-event-type{color:#f1c778}
+.royal-event-upper time{white-space:nowrap;color:#9badc5;font-weight:600;letter-spacing:0}
+.royal-event-name{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:#e8eef9;margin:6px 0 2px}
+.royal-event-sub{font-size:12px;color:#a0afca}
+.royal-event-bottom{display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;font-size:11px;color:#90a4be;margin-top:11px}
+.royal-event-bottom strong{font-size:16px;color:#f1c77c;font-variant-numeric:tabular-nums}
+.royal-gain{color:#94dfbd}
+.royal-testlink{font-size:11px;color:#e7c68c;border:0;background:none;padding:6px 0 0;text-align:left}
+.royal-testlink:hover{text-decoration:underline;color:#ffdf9e}
+.royal-caveat{padding:16px 18px;color:#a6b7d0;background:#1a273b;border-left:3px solid #c9a66a;border-radius:0 12px 12px 0;font-size:12px;line-height:1.7;margin-bottom:36px}
+.royal-caveat strong{color:#f2daa9}
+.royal-record-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:18px 0}
+.royal-record{min-width:0;background:linear-gradient(140deg,#1b2638,#101a2b);border:1px solid #33445b;border-radius:14px;padding:20px}
+.royal-record-title{font-size:11px;color:#a9b8d1;letter-spacing:.025em;font-weight:800}
+.royal-record-number{font-size:21px;color:#f4cd87;font-weight:850;margin:9px 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.royal-record-name{display:flex;align-items:center;gap:8px;font-size:12px;color:#b7c7dc;line-height:1.5;min-width:0}
+.royal-record-name>span:last-child{overflow-wrap:anywhere}
+.royal-record-name .mini-avatar{width:37px;height:37px;flex-shrink:0}
+.royal-preview{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:22px;background:linear-gradient(115deg,#2a2837,#151f31);border:1px solid #7d6847;border-radius:14px;margin:14px 0 24px}
+.royal-preview h2{font-family:'Cinzel',serif;font-size:18px;margin:5px 0}
+.royal-preview p{color:#a1b3ce;font-size:12px;margin:0}
+.royal-preview-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.royal-preview-right .mini-avatar{width:47px;height:47px;flex-shrink:0}
+.royal-preview-right>div{display:flex;flex-direction:column}
+.royal-preview-right strong{font-family:'Cinzel',serif;font-size:14px}
+.royal-preview-right small{font-size:11px;color:#b2c3d7}
+@media(max-width:1000px){.royal-record-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.royal-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.royal-preview{flex-direction:column;align-items:flex-start}.royal-preview-right{width:100%}}
+@media(max-width:570px){.royal-hero{padding:19px;min-height:155px}.royal-lead{gap:10px}.royal-lead .avatar{width:56px;height:56px;min-width:56px}.royal-lead-name{font-size:17px}.royal-lead-score{font-size:23px}.royal-lead-sub{font-size:10px}.royal-crown{right:-10px;font-size:125px}.royal-record-grid{grid-template-columns:1fr}.royal-stat{padding:13px}.royal-stat strong{font-size:23px}.royal-timeline{margin-left:10px;padding-left:19px}.royal-event{padding:13px;gap:9px}.royal-event:before{left:-27px}.royal-event-icon .mini-avatar{height:36px;width:36px}.royal-event-upper{flex-wrap:wrap;gap:5px}.royal-event-bottom strong{font-size:14px}.royal-graphbox{padding:14px}.royal-challenger{padding:15px}.royal-gap strong{font-size:17px}.royal-preview{padding:16px}.royal-preview-right .btn{width:100%}}
+</style>
 </head>
 <body>
 <div id="app">
@@ -107,6 +173,7 @@
     <div class="sidebar-label">WAR ROOM</div>
     <nav id="nav">
       <button class="nav-link active" data-page="home"><span class="nav-icon">♛</span> Throne Room <span class="nav-tip">⌘1</span></button>
+      <button class="nav-link" data-page="chronicle"><span class="nav-icon">♜</span> Royal Chronicle</button>
       <button class="nav-link" data-page="archive"><span class="nav-icon">▤</span> Test Archive <span class="nav-tip">⌘2</span></button>
       <button class="nav-link" data-page="gallery"><span class="nav-icon">▦</span> All Characters</button>
       <button class="nav-link" data-page="champions"><span class="nav-icon">◈</span> Champions <span class="nav-tip">⌘3</span></button>
@@ -118,7 +185,7 @@
       <div class="tiny-label">SOURCE ARCHIVE</div>
       <a class="source-link" href="https://docs.google.com/spreadsheets/d/1538QSbADzZf0p76qvC1dhhMk8RYO74I51l9G7nQSq_s/edit" target="_blank" rel="noopener">Original Google Sheet ↗</a>
       <div class="divider-line"></div>
-      <span class="version">THE BANKRUPTCY ARCHIVES • v4.2</span>
+      <span class="version">THE BANKRUPTCY ARCHIVES • v5.0</span>
     </div>
   </aside>
   <div class="main-shell">
@@ -133,13 +200,14 @@
 <script src="character-art.js"></script>
 <script src="team-damage.js"></script>
 <script src="support-profiles.js"></script>
+<script src="royal-chronicle.js"></script>
 <script>window.DPS_SEED = []; // Private records load only after authorised Google Sheets sign-in.
 </script>
 <script>/* The DPS Throne — an offline-first, user-editable personal archive. */
 (()=>{'use strict';
 const STORAGE_KEY='dps-throne-v1-tests';
 const origin=Array.isArray(window.DPS_SEED)?window.DPS_SEED:[];
-let tests=load(),page='home',q='',champion='',selectedDamageTest='SKI-FUR-N2D-01',galleryElement='all',galleryStatus='all',sort='dps',testSort='date',verificationFilter='all',pageIndex=0,selectedA='SKI-FUR-N2D-01',selectedB='VES-AET-C6-01';
+let tests=load(),page='home',chronicleFilter='all',q='',champion='',selectedDamageTest='SKI-FUR-N2D-01',galleryElement='all',galleryStatus='all',sort='dps',testSort='date',verificationFilter='all',pageIndex=0,selectedA='SKI-FUR-N2D-01',selectedB='VES-AET-C6-01';
 const pageSize=15;
 const $=(s,root=document)=>root.querySelector(s),$$=(s,root=document)=>Array.from(root.querySelectorAll(s));
 const fmt=n=>n===null||n===undefined||n===''?'—':new Intl.NumberFormat('en-IE',{maximumFractionDigits:2}).format(Number(n));
@@ -182,7 +250,7 @@ function podiumCard(t,i){return `<div class="podium-card ${i===0?'first':''}" ro
 function chartSvg(arr,field='dps'){const data=arr.filter(t=>n(t[field])!==null),w=680,h=190,p=30;if(!data.length)return '<p class="muted">No chart data yet.</p>';const vals=data.map(t=>n(t[field])),lo=Math.min(0,...vals)*.95,hi=Math.max(...vals)*1.12||1;const X=i=>p+(w-2*p)*(data.length===1?.5:i/(data.length-1)),Y=v=>h-p-(h-2*p)*(v-lo)/(hi-lo);const pts=data.map((t,i)=>[X(i),Y(vals[i])]);const path=pts.map((v,i)=>(i?'L':'M')+v.map(x=>x.toFixed(1)).join(' ')).join(' ');const area=path+` L ${X(data.length-1)} ${h-p} L ${X(0)} ${h-p} Z`;return `<svg class="chart" viewBox="0 0 ${w} ${h}" aria-label="Historical ${esc(field)} chart" role="img"><defs><linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#dbb267" stop-opacity=".29"/><stop offset="1" stop-color="#dbb267" stop-opacity="0"/></linearGradient></defs>${[0,1,2,3].map(i=>`<line class="gridline" x1="${p}" x2="${w-p}" y1="${p+(h-2*p)*i/3}" y2="${p+(h-2*p)*i/3}"/>`).join('')}<path class="fill" d="${area}"/><path class="line" d="${path}"/>${pts.map((v,i)=>`<circle class="dot" cx="${v[0]}" cy="${v[1]}" r="${data.length>17?3:4}" ><title>${esc(data[i].id)}: ${fmt(vals[i])}</title></circle>`).join('')}</svg>`}
 function home(){const b=leaders(),c=b[0],top=b.slice(0,3),max=c?.dps||0;return `<section class="hero"><div><div class="eyebrow">✦ &nbsp; TEYVAT HALL OF FAME</div><h1>THE DPS<br>THRONE</h1><p>One throne. ${tests.length} trials. Zero mercy. Every challenger has their history. Only the strongest team DPS rules.</p><button class="btn btn-gold" data-go="archive">Explore the run archive →</button> <button class="btn btn-secondary" data-go="damage" style="margin:10px 0 0 8px">Team damage →</button> <button class="btn btn-secondary" data-go="gallery" style="margin:10px 0 0 8px">Browse all characters →</button></div><div class="hero-art" aria-hidden="true">♛</div></section>
 <div class="kpi-grid"><div class="kpi"><div class="kpi-label">Reigning Champion</div><div class="kpi-number" style="font-size:22px;color:var(--gold)">${esc(c?.carry||'—')}</div><div class="kpi-sub">Top qualified 60s run</div></div><div class="kpi"><div class="kpi-label">Highest Team DPS</div><div class="kpi-number">${fmt(max)}</div><div class="kpi-sub">Damage per second</div></div><div class="kpi"><div class="kpi-label">Recorded Runs</div><div class="kpi-number">${tests.length}</div><div class="kpi-sub">Original + locally added tests</div></div><div class="kpi"><div class="kpi-label">Challengers</div><div class="kpi-number">${crowd()}</div><div class="kpi-sub">Unique on-field carries</div></div></div>
-<div class="section-head"><div><h2 class="section-title">The Royal Podium</h2><div class="section-sub">Champions ranked by best qualifying team DPS</div></div></div><div class="podium">${[top[1],top[0],top[2]].filter(Boolean).map(t=>podiumCard(t,b.indexOf(t))).join('')}</div>
+${window.DPSRoyalChronicle.preview(tests,avatar)}<div class="section-head"><div><h2 class="section-title">The Royal Podium</h2><div class="section-sub">Champions ranked by best qualifying team DPS</div></div></div><div class="podium">${[top[1],top[0],top[2]].filter(Boolean).map(t=>podiumCard(t,b.indexOf(t))).join('')}</div>
 <div class="section-head"><div><h2 class="section-title">Official Leaderboard</h2><div class="section-sub">Best qualifying run per character. Tap a row to investigate.</div></div><button class="link-action" data-go="champions">View all champions ↗</button></div>${table(['#','Character','Best Team DPS','Team DMG','Runs','Peak Carry DMG','Highest Hit','Evidence',''],b.map(leaderRow).join(''))}
 ${c?window.DPSThroneDamage.card(c,avatar,{compact:true}):''}<div class="section-head"><div><h2 class="section-title">Throne Intelligence</h2><div class="section-sub">The history behind the crown</div></div></div><div class="split-panel"><div class="panel"><div class="panel-title">SKIRK · RECORD PROGRESSION</div>${chartSvg(tests.filter(t=>t.carry==='Skirk'&&qualified(t)).sort(byDate))}<div class="chart-legend"><span>First recorded benchmark</span><span>Latest: ${fmt(tests.filter(t=>t.carry==='Skirk'&&qualified(t)).slice(-1)[0]?.dps)} DPS</span></div></div><div class="panel"><div class="panel-title">THE RULES OF THE THRONE</div><p class="note">Ranked by <strong style="color:var(--gold)">team DPS</strong>, not personal carry damage. Runs normally require 60.00 seconds. One player-approved 67.47-second Mitya exception is clearly flagged.</p><p class="note">Screenshot confirmation is more reliable than historical recollection. Comparisons across different builds or teams should not be read as isolated character gains.</p><button class="btn btn-secondary" data-go="protocol">Read the test protocol →</button></div></div>`}
 const byDate=(a,b)=>(a.date||'').localeCompare(b.date||'')||tests.indexOf(a)-tests.indexOf(b);
@@ -261,11 +329,11 @@ document.addEventListener('error',e=>{
   img.closest('.portrait-avatar')?.classList.add('image-failed');
   img.removeAttribute('src');
 },true);
-function render(){let html=page==='damage'?window.DPSThroneDamage.page(tests,selectedDamageTest,avatar):page==='gallery'?gallery():page==='archive'?archive():page==='champions'?(champion?profile():champions()):page==='duels'?duels():page==='protocol'?protocol():home();if(innerWidth<=780)html=`<div class="mobile-nav">${[['home','♛ Throne'],['archive','▤ Archive'],['damage','◉ Damage'],['gallery','▦ Characters'],['champions','◈ Champions'],['duels','⚔ Duel Lab'],['protocol','◇ Protocol']].map(([p,label])=>`<button data-go="${p}" class="${p===page?'active':''}">${label}</button>`).join('')}</div>`+html;$('#content').innerHTML=html}
+function render(){let html=page==='chronicle'?window.DPSRoyalChronicle.render({tests,avatar,pageHead,filter:chronicleFilter}):page==='damage'?window.DPSThroneDamage.page(tests,selectedDamageTest,avatar):page==='gallery'?gallery():page==='archive'?archive():page==='champions'?(champion?profile():champions()):page==='duels'?duels():page==='protocol'?protocol():home();if(innerWidth<=780)html=`<div class="mobile-nav">${[['home','♛ Throne'],['chronicle','♜ Chronicle'],['archive','▤ Archive'],['damage','◉ Damage'],['gallery','▦ Characters'],['champions','◈ Champions'],['duels','⚔ Duel Lab'],['protocol','◇ Protocol']].map(([p,label])=>`<button data-go="${p}" class="${p===page?'active':''}">${label}</button>`).join('')}</div>`+html;$('#content').innerHTML=html}
 // State-aware controls keep the interface interactive without server access.
 document.addEventListener('click',e=>{const nav=e.target.closest('[data-page]');if(nav){champion='';q='';open(nav.dataset.page);return}const go=e.target.closest('[data-go]');if(go){champion='';q='';open(go.dataset.go);return}const dmg=e.target.closest('[data-damage-test]');if(dmg){selectedDamageTest=dmg.dataset.damageTest;$('#modalRoot').innerHTML='';open('damage');return}const g=e.target.closest('[data-gallery-character]');if(g){champion=g.dataset.galleryCharacter;q='';open('champions');return}const ch=e.target.closest('[data-open-character]');if(ch){champion=ch.dataset.openCharacter;open('champions');return}const tr=e.target.closest('[data-test]');if(tr){detail(tr.dataset.test);return}const close=e.target.closest('[data-close]');if(close){$('#modalRoot').innerHTML='';return}const edit=e.target.closest('[data-edit]');if(edit){testForm(edit.dataset.edit);return}const del=e.target.closest('[data-delete]');if(del){if(confirm('Permanently remove this test from your local archive?')){tests=tests.filter(x=>x.id!==del.dataset.delete);save();$('#modalRoot').innerHTML='';toast('Test removed from local archive.');render()}return}const preset=e.target.closest('[data-duel-preset]');if(preset){[selectedA,selectedB]=preset.dataset.duelPreset.split('|');render();return}if(e.target.id==='prevPage'&&pageIndex>0){pageIndex--;render()}if(e.target.id==='nextPage'){pageIndex++;render()}if(e.target.id==='addButton'){testForm()}if(e.target.id==='importButton'){$('#fileInput').click()}if(e.target.id==='exportButton'){download('dps-throne-backup.json',JSON.stringify(tests,null,2),'application/json')}if(e.target.classList.contains('modal-backdrop'))$('#modalRoot').innerHTML=''});
 document.addEventListener('input',e=>{if(e.target.id==='searchTests'||e.target.id==='searchChampions'||e.target.id==='searchGallery'){let inp=e.target;q=inp.value;pageIndex=0;let pos=inp.selectionStart;render();const target=$(e.target.id==='searchTests'?'#searchTests':e.target.id==='searchGallery'?'#searchGallery':'#searchChampions');target?.focus();target?.setSelectionRange(pos,pos)}});
-document.addEventListener('change',e=>{if(e.target.id==='galleryElement'){galleryElement=e.target.value;render()}if(e.target.id==='galleryStatus'){galleryStatus=e.target.value;render()}if(e.target.id==='damageTest'){selectedDamageTest=e.target.value;render()}if(e.target.id==='profileSelect'){champion=e.target.value;render()}if(e.target.id==='duelA'){selectedA=e.target.value;render()}if(e.target.id==='duelB'){selectedB=e.target.value;render()}if(e.target.id==='sortTests'){testSort=e.target.value;pageIndex=0;render()}if(e.target.id==='verificationFilter'){verificationFilter=e.target.value;pageIndex=0;render()}});
+document.addEventListener('change',e=>{if(e.target.id==='royalFilter'){chronicleFilter=e.target.value;render()}if(e.target.id==='galleryElement'){galleryElement=e.target.value;render()}if(e.target.id==='galleryStatus'){galleryStatus=e.target.value;render()}if(e.target.id==='damageTest'){selectedDamageTest=e.target.value;render()}if(e.target.id==='profileSelect'){champion=e.target.value;render()}if(e.target.id==='duelA'){selectedA=e.target.value;render()}if(e.target.id==='duelB'){selectedB=e.target.value;render()}if(e.target.id==='sortTests'){testSort=e.target.value;pageIndex=0;render()}if(e.target.id==='verificationFilter'){verificationFilter=e.target.value;pageIndex=0;render()}});
 $('#fileInput').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const txt=await file.text();let imported=file.name.toLowerCase().endsWith('.csv')?parseCSV(txt):JSON.parse(txt);if(!Array.isArray(imported))throw Error('Expected an array of tests.');imported=imported.filter(t=>t&&t.id&&t.carry&&n(t.dps)!==null).map(t=>({...t,dps:n(t.dps),duration:n(t.duration),teamDamage:n(t.teamDamage),carryDamage:n(t.carryDamage),highestHit:n(t.highestHit)}));if(!imported.length)throw Error('No valid test records were found.');const existing=new Map(tests.map(x=>[x.id,x]));let added=0,changed=0;for(const t of imported){if(existing.has(t.id)){changed++}else added++;existing.set(t.id,t)}if(!confirm(`Import ${imported.length} test records? ${added} new, ${changed} existing IDs to overwrite. Export a backup first if needed.`))return;tests=[...existing.values()];save();champion='';q='';open('home');toast(`${added} new and ${changed} updated tests imported.`)}catch(err){toast('Import failed: '+err.message,true)}finally{e.target.value=''}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#modalRoot').innerHTML='';if((e.metaKey||e.ctrlKey)&&/^[1-5]$/.test(e.key)){e.preventDefault();champion='';open(['home','archive','champions','duels','protocol'][Number(e.key)-1])}if(e.key==='Enter'&&e.target.hasAttribute('data-open-character')){champion=e.target.dataset.openCharacter;open('champions')}});
 // Called only after a read-only Google Sheets OAuth fetch. Changes are never written back to Drive.
