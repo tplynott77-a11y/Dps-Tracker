@@ -83,6 +83,7 @@ function render({name,tests,avatar,pageHead,table,fmt,esc,datefmt,chartSvg,verif
  return pageHead('CHARACTER DOSSIER','Character Profiles',sub)
  +'<div class="filters"><select id="profileSelect" class="select" style="min-width:240px">'+[...new Set([...((window.DPS_CHARACTER_CATALOG||[]).map(c=>c.name)),...tests.flatMap(t=>[t.carry,t.support1,t.support2,t.support3].filter(Boolean))])].sort().map(c=>'<option value="'+esc(c)+'"'+(c===name?' selected':'')+'>'+esc(c)+'</option>').join('')+'</select>'+badge+'</div>'
  +'<div class="profile-summary">'+avatar(name)+'<div><h2>'+esc(name)+'</h2><div class="muted">'+esc(summary)+'</div><div style="margin-top:8px"><span class="tag">'+esc(m.last?latestRole+' in '+m.last.test.id:'No team records')+'</span></div></div></div>'
+ +'<div class="farm-crosslink"><span>🌱 Upgrades, material needs and project priorities are tracked in Farming Operations.</span><button type="button" class="btn btn-secondary" data-farm-character="'+esc(name)+'">View '+esc(name)+' farming goals →</button></div>'
  +'<div class="kpi-grid">'+kpi('Peak personal damage',num(personal?.damage??null),personal?personal.role==='support'?'As support':'As on-field carry':'Not documented')
  +kpi('Peak personal DPS',num(dps?.personalDps??null),dps?'Calculated, per test':'No measured damage')
  +kpi('Best team DPS',num(team?.teamDps??null),team?'Team-wide, '+(team.role==='support'?'support':'carry')+' role':'No qualifying run')
