@@ -53,10 +53,16 @@ function fromLocal(key){
 }
 function statRow(label,value){return '<div class="farm-build-stat"><span>'+esc(label)+'</span><strong>'+esc(value||'Not recorded')+'</strong></div>'}
 const goalKey=goal=>val(goal).split(/\s+[—–-]\s+/)[0];
-function goalsFor(d,key){return (d.projects||[]).filter(g=>same(goalKey(g.goal),key)).sort((a,b)=>{
- const order={active:0,later:1,done:2},aStatus=order[val(a.status).toLowerCase()]??3,bStatus=order[val(b.status).toLowerCase()]??3;
- return aStatus-bStatus||(a.rank??999)-(b.rank??999)
-});}
+function goalsFor(d,key){
+ const formal=(d.projects||[]).filter(g=>same(goalKey(g.goal),key)).map(g=>({...g,source:'Projects',kind:'project'}));
+ const additional=(d.characterGoals||[]).filter(g=>same(g.key,key)).map(g=>({...g,focus:g.source,kind:'build'}));
+ const all=[...formal,...additional];
+ const order={active:0,planned:1,later:2,suggested:3,done:4};
+ return all.sort((a,b)=>{
+  const aStatus=order[val(a.status).toLowerCase()]??5,bStatus=order[val(b.status).toLowerCase()]??5;
+  return aStatus-bStatus||(a.rank??999)-(b.rank??999)
+ });
+}
 function sourcesFor(d,key){
  const stored=findSnapshot(d,key),upload=fromLocal(key);
  const dateStored=dateValue(stored?.date),dateLocal=dateValue(upload?.date);
@@ -95,7 +101,7 @@ function renderProfile(key,d,utils){
  const active=goals.filter(g=>val(g.status).toLowerCase()==='active').length,done=goals.filter(g=>val(g.status).toLowerCase()==='done').length;
  const goalList=goals.length?goals.map(g=>{
   const related=(d.requirements||[]).filter(x=>x.goal===g.goal&&x.needed>0&&val(g.status).toLowerCase()!=='done');
-  return '<article class="farm-build-goal"><div class="farm-build-goal-head"><strong>'+esc(g.goal)+'</strong><span class="farm-status '+(val(g.status).toLowerCase()==='active'?'active':val(g.status).toLowerCase()==='done'?'done':'later')+'">'+esc(g.status)+'</span></div><p>'+esc(g.target||'')+'</p><small>'+esc(g.focus||'')+'</small>'+(related.length?'<div class="farm-goal-shortages">'+related.length+' recorded shortage line'+(related.length===1?'':'s')+': '+esc(related.slice(0,3).map(x=>name(x.material)).join(' · '))+(related.length>3?'…':'')+'</div>':'')+'</article>';
+  return '<article class="farm-build-goal"><div class="farm-build-goal-head"><strong>'+esc(g.goal)+'</strong><span class="farm-status '+(val(g.status).toLowerCase()==='active'?'active':val(g.status).toLowerCase()==='done'?'done':'later')+'">'+esc(g.status)+'</span></div><p>'+esc(g.target||'')+'</p><small>'+esc(g.kind==='build'?(g.source+' · '+g.date):g.focus||'')+'</small>'+(g.kind==='build'&&g.note?'<div class="farm-build-goal-note">'+esc(g.note)+'</div>':'')+(related.length?'<div class="farm-goal-shortages">'+related.length+' recorded shortage line'+(related.length===1?'':'s')+': '+esc(related.slice(0,3).map(x=>name(x.material)).join(' · '))+(related.length>3?'…':'')+'</div>':'')+'</article>';
  }).join(''):'<div class="farm-empty">No individual goals are currently listed for this character in Projects.</div>';
  const hasWeapon=Boolean(b.weapon),scanLabel=b.scanDate?'Equipment scan: '+b.scanDate:'No dated full equipment scan';
  const portrait=utils.portrait(key);
@@ -109,7 +115,7 @@ function renderProfile(key,d,utils){
  +(b.reportArtifacts?'<p class="farm-build-report"><strong>Newer artifact report:</strong> '+esc(b.reportArtifacts)+'</p>':'')
  +(b.reportNote?'<p class="farm-build-report"><strong>Latest build note:</strong> '+esc(b.reportNote)+'</p>':'')
  +'<p class="farm-fineprint">Artifact slots display their last documented scan, which may differ from the current in-game build. Blank slots mean unrecorded unless a complete scan explicitly confirms none equipped. Reported updates do not invent individual artifact rolls.</p></section>'
- +'<section class="farm-build-section"><div class="farm-build-heading"><div><div class="farm-eyebrow">OBJECTIVES & UPGRADES</div><h2>Character Goals</h2></div><span class="farm-build-provenance">'+goals.length+' from Projects</span></div><div class="farm-build-goal-list">'+goalList+'</div></section>'
+ +'<section class="farm-build-section"><div class="farm-build-heading"><div><div class="farm-eyebrow">OBJECTIVES & UPGRADES</div><h2>Character Goals</h2></div><span class="farm-build-provenance">'+goals.length+' tracked goals · Projects + build plans</span></div><div class="farm-build-goal-list">'+goalList+'</div></section>'
  +'<div class="farm-build-actions"><button type="button" class="farm-btn secondary" data-open-character="'+esc(label)+'">Open DPS Profile →</button><button type="button" class="farm-btn secondary" data-farm-nav="farm-projects">Open Project Queue →</button></div>'
  +'<div class="farm-build-section farm-import-section"><div class="farm-eyebrow">UPDATE EQUIPMENT PRIVATELY</div><h3>GOOD Import</h3><p>Import a full Inventory Kamera GOOD JSON snapshot for your entire roster. Only equipment and character build fields are saved locally in this browser—not Mora, wishes, or the full inventory. This does not upload or change your private Google Sheet.</p>'
  +'<label class="farm-import-button" for="farmGoodFile">Choose GOOD JSON file</label><input id="farmGoodFile" type="file" accept=".json,application/json" aria-label="Import an Inventory Kamera GOOD JSON file"/><p id="farmGoodMessage" class="farm-import-message">'+(local?'Local equipment scan: '+esc(local.filename)+' · '+(local.date||'date unspecified'):'No local equipment scan imported yet')+'</p></div></div>';
