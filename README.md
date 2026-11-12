@@ -10,6 +10,7 @@ A personal Genshin Impact DPS testing hall of fame, published as a static websit
 - Browser-local cache and data exports; no account-owned database or backend
 - Test timing and evidence badges, including the approved Mitya 67.47-second exception
 - **Damage Lab**: per-test individual damage bars, official character portraits, dynamic percentages, complete/partial validation badges and notable battles
+- **Support performance profiles:** every character now records both carry and support appearances, their highest documented personal damage, derived personal DPS, their best qualifying team DPS, and linked run histories. Gallery cards also recognise support-only characters.
 - Individual-damage summaries inside the Throne Room, each champion's profile, test detail dialogs and side-by-side Duel Lab comparisons
 - Private-source derivation: damage numbers are read preferentially from the structured Support 1/2/3 Damage columns (N, P and R) in the private Google Sheet, falling back to documented historical test notes when no structured value is available. Full four-character breakdowns are accepted only when totals reconcile; missing support numbers stay unattributed.
 
