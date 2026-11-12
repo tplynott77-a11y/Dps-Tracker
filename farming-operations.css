@@ -166,3 +166,17 @@ body.archive-mode .top-actions,body.farming-mode .top-actions{display:none}
 .farm-crosslink button:hover{background:#456b4e}
 @media(max-width:1250px){.farm-detail{grid-row:1}.farm-project-layout>.farm-stack{grid-row:2}}
 @media(max-width:600px){.farm-activity-grid{grid-template-columns:1fr}.farm-crosslink{flex-wrap:wrap}.farm-crosslink button{width:100%}}
+
+/* Soft sidebar within the farming / umbrella spaces; Throne stays dark. */
+body.farming-mode .sidebar,body.archive-mode .sidebar{background:#ebf3eb;border-right-color:#d5e1d6}
+body.farming-mode .sidebar .brand strong,body.farming-mode .sidebar .brand span,
+body.archive-mode .sidebar .brand strong,body.archive-mode .sidebar .brand span{color:#3d6750}
+body.farming-mode .sidebar .brand-sigil,body.archive-mode .sidebar .brand-sigil{background:#dcebdc;border-color:#a7c2a8;color:#477b57}
+body.farming-mode .sidebar .sidebar-label,body.archive-mode .sidebar .sidebar-label{color:#7b9a85}
+body.farming-mode .sidebar .nav-link,body.archive-mode .sidebar .nav-link{color:#698172}
+body.farming-mode .sidebar .nav-link:hover,body.archive-mode .sidebar .nav-link:hover{background:#dfece0;color:#3a6350}
+body.farming-mode .sidebar .nav-link.active,body.archive-mode .sidebar .nav-link.active{background:#d2e6d6;color:#2d6949;border-color:#aecdb4}
+body.farming-mode .sidebar .nav-tip,body.archive-mode .sidebar .nav-tip{color:#92ac9b}
+body.farming-mode .sidebar .sidebar-bottom .version,body.archive-mode .sidebar .sidebar-bottom .version{color:#91a99a}
+body.farming-mode .sidebar .sidebar-bottom .source-link,body.archive-mode .sidebar .sidebar-bottom .source-link{color:#42795d}
+body.farming-mode .sidebar .divider-line,body.archive-mode .sidebar .divider-line{background:#cadbcd}
