@@ -33,9 +33,17 @@ function parse(values){
  const requirements=res.requirements.slice(1).filter(r=>r[0]&&r[3]).map(r=>({goal:val(r[0]),priority:num(r[1]),status:val(r[2]),material:val(r[3]),required:num(r[4]),stock:num(r[5]),reserved:num(r[6]),available:num(r[7]),needed:num(r[8]),method:val(r[9])}));
  const inventory=res.inventory.slice(1).filter(r=>r[0]).map(r=>({key:val(r[0]),planning:num(r[1]),scan:num(r[2])}));
  const field=res.field.slice(1).filter(r=>r[1]&&r[2]).map(r=>({priority:num(r[0]),goal:val(r[1]),task:val(r[2]),material:val(r[3]),required:num(r[4]),stock:num(r[5]),needed:num(r[6]),type:val(r[7]),method:val(r[8]),progress:val(r[9])}));
- const characters=res.characters.slice(1).filter(r=>r[0]).map(r=>({name:val(r[0]),level:val(r[1]),asc:val(r[2]),cons:val(r[3]),na:val(r[4]),skill:val(r[5]),burst:val(r[6])}));
+ let characters=res.characters.slice(1).filter(r=>r[0]).map(r=>({name:val(r[0]),level:val(r[1]),asc:val(r[2]),cons:val(r[3]),na:val(r[4]),skill:val(r[5]),burst:val(r[6])}));
  const builds=res.builds.slice(1).filter(r=>r[0]).map(r=>({key:val(r[0]),date:val(r[1]),source:val(r[2]),weapon:val(r[3]),weaponLevel:num(r[4]),refinement:num(r[5]),artifactCount:num(r[6]),setSummary:val(r[7]),equipmentStatus:val(r[8]),reportDate:val(r[9]),reportedWeapon:val(r[10]),reportedWeaponLevel:num(r[11]),reportedRefinement:num(r[12]),reportedLevel:num(r[13]),reportedCons:num(r[14]),reportedTalents:val(r[15]),reportedArtifacts:val(r[16]),note:val(r[17]),provenance:val(r[18])}));
  const buildArtifacts=res.buildArtifacts.slice(1).filter(r=>r[0]&&r[1]).map(r=>({key:val(r[0]),slot:val(r[1]),set:val(r[2]),main:val(r[3]),level:num(r[4]),substats:val(r[5]),date:val(r[6]),source:val(r[7]),id:val(r[8])}));
+ // Recent confirmed acquisitions may be absent from an older roster scan.
+ for(const b of builds){
+  const normName=v=>lower(v).replace(/[^a-z0-9]/g,'');
+  if(!characters.some(c=>normName(c.name)===normName(b.key))&&(b.reportedLevel!==null||b.date)){
+   const [na,skill,burst]=(b.reportedTalents||'').split('/');
+   characters.push({name:b.key,level:b.reportedLevel!=null?String(b.reportedLevel):'',asc:'',cons:b.reportedCons!=null?String(b.reportedCons):'',na:na||'',skill:skill||'',burst:burst||''});
+  }
+ }
  const dashboard=res.dashboard;
  const counters={};for(const r of dashboard){if(r[0]&&r[1])counters[val(r[0])]=num(r[1]);if(r[3]&&r[4])counters[val(r[3])]=num(r[4]);}
  if(!priorities.length||!projects.length)throw Error('Cannot identify active farming project queue; no data changed.');
