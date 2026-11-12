@@ -97,7 +97,15 @@ function recordBook(tests){
   }
  }
  const basement=valid.slice().sort((a,b)=>num(a.dps)-num(b.dps))[0]||null;
- return {leader,challenger,biggestHit,mostPlayed:mostPlayed.filter(x=>x.count===mostPlayed[0]?.count),personal,carry,support,largestSupportShare,basement};
+ // Completed records only: do not assign an end date to the reigning current record.
+ const milestones=build(rows).milestones;
+ const pastMilestones=milestones.slice(0,-1).map((ev,i)=>{
+  const next=milestones[i+1];
+  const days=Math.max(0,Math.round((Date.parse(next.date+'T00:00:00Z')-Date.parse(ev.date+'T00:00:00Z'))/86400000));
+  return {event:ev,next,days};
+ });
+ const longestRetired=pastMilestones.sort((a,b)=>b.days-a.days||a.event.index-b.event.index)[0]||null;
+ return {leader,challenger,biggestHit,mostPlayed:mostPlayed.filter(x=>x.count===mostPlayed[0]?.count),personal,carry,support,largestSupportShare,basement,longestRetired};
 }
 function graph(milestones){
  if(!milestones.length)return '';
@@ -148,7 +156,8 @@ function render(args){
  record('▣','Most appearances',most.length?fmt(most[0].count)+' tests':'—',most.map(m=>m.name).join(' & ')||'Unknown',most[0]?.name,null)+
  record('★','Largest support share',book.largestSupportShare?book.largestSupportShare.percent.toFixed(1)+'%':'—',(book.largestSupportShare?.name||'Unknown')+' of team damage',book.largestSupportShare?.name,book.largestSupportShare?.test)+
  record('♟','The Basement™',fmt(book.basement&&num(book.basement.dps))+' DPS',(book.basement?.carry||'Unknown')+' · lowest qualifying recorded team benchmark',book.basement?.carry,book.basement)+
- '</div><p class="note">Basement records reflect the builds and tests you logged—not overall character strength. Personal damage records use only documented character-level contributions; unknown values remain unknown.</p>';
+ record('⌛','Longest superseded DPS record',book.longestRetired?fmt(book.longestRetired.days)+' days':'—',book.longestRetired?book.longestRetired.event.test.carry+' · '+fmt(book.longestRetired.event.dps)+' DPS until '+niceDate(book.longestRetired.next.date):'Not enough dated milestones',book.longestRetired?.event?.test?.carry,book.longestRetired?.event?.test)+
+ '</div><p class="note">Basement records reflect the builds and tests you logged—not overall character strength. Personal damage records use only documented character-level contributions; unknown values remain unknown. The longest superseded record counts calendar days between dated benchmarks, not exact reign hours.</p>';
  const challenger=book.leader&&book.challenger?'<div class="royal-challenger"><div class="eyebrow">THE NEXT THREAT TO THE CROWN</div><div class="royal-challenger-body">'+avatar(book.challenger.carry)+'<div><strong>'+esc(book.challenger.carry)+'</strong><span>'+fmt(book.challenger.dps)+' DPS · best qualifying run</span></div><div class="royal-gap"><strong>'+fmt(num(book.leader.dps)-num(book.challenger.dps))+'</strong><span>DPS behind</span></div></div><div class="royal-challenger-foot">To surpass '+esc(book.leader.carry)+'’s record, a challenger needs at least '+fmt(num(book.leader.dps)+1)+' team DPS.</div></div>':'';
  return intro+heading+stats+(history.milestones.length?'<div class="royal-graphbox"><h2 class="section-title">The Record Staircase</h2>'+graph(history.milestones)+'<div class="royal-graphlabels"><span>'+niceDate(history.milestones[0].date)+'</span><span>'+niceDate(history.current.date)+'</span></div></div>':'<div class="dmg-empty">Your Chronicle will appear after a successful Google Sheets sync. No private test data is embedded in this public website.</div>')
  +challenger+timelineHtml+titleRecords;
