@@ -7,6 +7,8 @@ A personal Genshin Impact command centre with **two connected departments** unde
 - **DPS Throne:** original battle record database, 60-second leaderboards, team damage analysis, personal support records, Royal Chronicle and character galleries.
 - **Farming Operations:** a warm ivory/sage Command Centre, live project queue, Requirements-based Resin Planner, searchable planning inventory, resin-free objectives and a character roster, all read directly from the existing *Bankruptcy Archives — Farming Priority Tracker (Master)*.
 - **Roster filters:** combine text search, exact recorded character level or level thresholds (such as Lv 80+), an element selector, and A–Z / highest / lowest level sorting. Filtered results have a count and clear button; canonical character names and elements come from the existing official-game character catalogue, with unknown elements clearly labelled. Filtering never modifies the Google Sheet.
+- **Character build dossiers:** tap any Farming character to see recorded weapon/level/refinement, each artifact slot with main stat and available substats, talents, constellation, and full goal history. The interface reads three *private* workbook tabs: **Build Snapshots** (74 character records), **Build Artifacts** (196 equipped-slot records), and **Build Goals** (six dated user/suggested goals). Older 15 October scan data fills gaps; verified 23 October items and later player reports are preserved with provenance. 'None equipped in scan' is never equated with an unrecorded slot. The local GOOD importer is an optional, browser-only equipment snapshot; it does not silently change the Google workbook.
+
 
 Open the website and use **Archives Home** to choose a department. They share the same navigation, so a character profile in the Throne can jump directly to a matching farming project search.
 
@@ -21,7 +23,7 @@ Both private spreadsheets use the *same Google OAuth Web Client ID* and read-onl
 
 **Important limitations:** Farming stock is the planning inventory, NOT a real-time wallet. Some item counts are old or unverified, and the underlying source sometimes retains historical shortages under completed projects. The website preserves existing priority order instead of assuming new priorities. The Resin Planner groups source-documented needs by acquisition type and does **not** fabricate random-drop estimates, resin costs or expected farming days.
 
-The source workbook was checked on 12 November 2026: 44 queued objectives, 285 requirement lines, 628 inventory keys, 26 resin-free tasks and 73 character roster entries. These are not hardcoded and will change as your spreadsheet changes.
+The source workbook was checked on 12 November 2026: the original character roster contained 73 entries; an additional confirmed Furina acquisition in Build Snapshots makes 74 visible dossier characters. The imported historical equipment entries are dated to their actual GOOD scan. All counts are read at sync time.
 
 
 ## Features
