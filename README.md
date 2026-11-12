@@ -6,6 +6,7 @@ A personal Genshin Impact command centre with **two connected departments** unde
 
 - **DPS Throne:** original battle record database, 60-second leaderboards, team damage analysis, personal support records, Royal Chronicle and character galleries.
 - **Farming Operations:** a warm ivory/sage Command Centre, live project queue, Requirements-based Resin Planner, searchable planning inventory, resin-free objectives and a character roster, all read directly from the existing *Bankruptcy Archives — Farming Priority Tracker (Master)*.
+- **Roster filters:** combine text search, exact recorded character level or level thresholds (such as Lv 80+), an element selector, and A–Z / highest / lowest level sorting. Filtered results have a count and clear button; canonical character names and elements come from the existing official-game character catalogue, with unknown elements clearly labelled. Filtering never modifies the Google Sheet.
 
 Open the website and use **Archives Home** to choose a department. They share the same navigation, so a character profile in the Throne can jump directly to a matching farming project search.
 
