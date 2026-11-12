@@ -177,7 +177,7 @@ function maybeRefresh(){if(state.working)return;if(state.source==='none'&&freshT
 document.addEventListener('click',e=>{
  const nav=e.target.closest('[data-farm-nav]');if(nav){state.search='';window.BankruptcyArchives?.navigate?.(nav.dataset.farmNav);return}
  if(e.target.closest('[data-farm-sync]')){connect();return}
- const character=e.target.closest('[data-farm-character]');if(character){state.search=character.dataset.farmCharacter;window.BankruptcyArchives?.navigate?.('farm-projects');return}
+ const character=e.target.closest('[data-farm-character]');if(character){const aliases={'Kaedehara Kazuha':'Kazuha','Raiden Shogun':'Raiden','Tartaglia':'Childe','Yumemizuki Mizuki':'Mizuki'};state.search=aliases[character.dataset.farmCharacter]||character.dataset.farmCharacter;window.BankruptcyArchives?.navigate?.('farm-projects');return}
  const item=e.target.closest('[data-farm-item]');if(item){state.selected=num(item.dataset.farmItem);window.BankruptcyArchives?.navigate?.('farm-projects');return}
  if(e.target.closest('[data-farm-more]')){state.stockShow+=100;refresh();return}
 });
