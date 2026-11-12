@@ -86,6 +86,18 @@
 .dmg-panel.compact .dmg-member-data{font-size:11px;gap:7px}.dmg-panel.compact .dmg-caption{font-size:11px}
 @media(max-width:860px){.dmg-versus-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.dmg-stats{grid-template-columns:1fr 1fr}.dmg-stat{padding:12px}.dmg-stat strong{font-size:21px}.dmg-panel{padding:15px}.dmg-card-head h3{font-size:15px}.dmg-total{font-size:19px}.dmg-member-data{gap:7px;font-size:12px}.dmg-member .mini-avatar{width:32px;height:32px}}
+
+/* v4.2 — Full character participation history, including support-only characters. */
+.profile-record-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+.profile-record{padding:20px;border:1px solid #374660;border-radius:15px;background:linear-gradient(145deg,#1c2a40,#111a2b);min-width:0}
+.profile-record-heading{color:#8da2bd;font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+.profile-record-value{color:#f0c778;font-size:24px;letter-spacing:-.035em;font-weight:900;font-variant-numeric:tabular-nums;margin:8px 0}
+.profile-record-desc{color:#a7b9d0;font-size:12px;min-height:42px;overflow-wrap:anywhere}
+.profile-test-link{margin-top:14px!important;font-size:11px!important;max-width:100%;white-space:normal}
+.profile-value{font-size:25px!important}
+.profile-record .note{margin-top:10px}
+@media(max-width:1100px){.profile-record-grid{grid-template-columns:1fr 1fr}.profile-record:last-child{grid-column:1/-1}}
+@media(max-width:680px){.profile-record-grid{grid-template-columns:1fr}.profile-record:last-child{grid-column:auto}.profile-record-desc{min-height:0}.profile-record{padding:16px}.profile-value{font-size:21px!important}}
 </style>
 </head>
 <body>
@@ -106,7 +118,7 @@
       <div class="tiny-label">SOURCE ARCHIVE</div>
       <a class="source-link" href="https://docs.google.com/spreadsheets/d/1538QSbADzZf0p76qvC1dhhMk8RYO74I51l9G7nQSq_s/edit" target="_blank" rel="noopener">Original Google Sheet ↗</a>
       <div class="divider-line"></div>
-      <span class="version">THE BANKRUPTCY ARCHIVES • v4.1</span>
+      <span class="version">THE BANKRUPTCY ARCHIVES • v4.2</span>
     </div>
   </aside>
   <div class="main-shell">
@@ -120,6 +132,7 @@
 <div id="toastRoot" role="status" aria-live="polite"></div>
 <script src="character-art.js"></script>
 <script src="team-damage.js"></script>
+<script src="support-profiles.js"></script>
 <script>window.DPS_SEED = []; // Private records load only after authorised Google Sheets sign-in.
 </script>
 <script>/* The DPS Throne — an offline-first, user-editable personal archive. */
@@ -186,7 +199,7 @@ function gallery(){
  const extras=[...new Set(tests.map(t=>t.carry))].filter(n=>!existing.has(charKey(n))).map(name=>({name,element:'Unknown'}));
  const items=[...catalog,...extras].sort((a,b)=>a.name.localeCompare(b.name));
  const visible=items.filter(c=>{
-   const hasRun=tests.some(t=>charKey(t.carry)===charKey(c.name));
+   const hasRun=window.DPSSupportProfiles.gallerySummary(c.name,tests).tested;
    return c.name.toLowerCase().includes(q.toLowerCase())
     &&(galleryElement==='all'||c.element===galleryElement)
     &&(galleryStatus==='all'||(galleryStatus==='tested'?hasRun:!hasRun));
@@ -196,25 +209,24 @@ function gallery(){
     +'<select class="select roster-select" id="galleryElement" aria-label="Filter element">'+elems.map(x=>'<option value="'+esc(x)+'"'+(x===galleryElement?' selected':'')+'>'+(x==='all'?'All elements':x)+'</option>').join('')+'</select>'
     +'<select class="select roster-select" id="galleryStatus" aria-label="Filter testing status">'+[['all','All characters'],['tested','Tested'],['untested','Not yet tested']].map(([key,label])=>'<option value="'+key+'"'+(key===galleryStatus?' selected':'')+'>'+label+'</option>').join('')+'</select></div>';
  const tiles=visible.map(c=>{
-   const count=tests.filter(t=>charKey(t.carry)===charKey(c.name)).length;
-   const run=best(c.name);
-   const sub=count?count+' logged test'+(count===1?'':'s')+' · '+fmt(run?.dps)+' DPS':'Not yet tested';
+   const summary=window.DPSSupportProfiles.gallerySummary(c.name,tests);
+   const sub=summary.sub;
    return '<button class="roster-card" type="button" data-gallery-character="'+esc(c.name)+'" aria-label="Open '+esc(c.name)+' profile">'+avatar(c.name)
      +'<span class="character-name">'+esc(c.name)+'</span><span class="character-sub">'+esc(c.element||'Unknown')+'</span>'
-     +'<span class="character-sub '+(count?'tested':'untested')+'">'+sub+'</span></button>';
+     +'<span class="character-sub '+(summary.tested?'tested':'untested')+'">'+esc(sub)+'</span></button>';
  }).join('');
- const tested=items.filter(c=>tests.some(t=>charKey(t.carry)===charKey(c.name))).length;
+ const tested=items.filter(c=>window.DPSSupportProfiles.gallerySummary(c.name,tests).tested).length;
  return pageHead('THE ROYAL ATLAS','All Characters','Browse Genshin Impact characters using official in-game portraits. No fan art, no invented damage results.')
   +'<div class="roster-intro"><span class="tag">'+items.length+' characters · '+tested+' tested</span><span class="roster-info">Portrait artwork © COGNOSPHERE / HoYoverse · In-game icons delivered via Enka.Network</span></div>'
   +controls+'<div class="roster-grid">'+(tiles||'<p class="note">No characters match those filters.</p>')+'</div>'
   +'<p class="roster-info">Some newly released assets may not be available from the image host yet. Those characters show a neutral initials placeholder until official game artwork loads. Click any character to open their profile.</p>';
 }
-function profile(){const name=champion||leaders()[0]?.carry||'',arr=tests.filter(t=>t.carry===name),rank=leaders().findIndex(t=>t.carry===name),b=best(name),latest=arr.slice().filter(x=>x.date).sort(byDate).slice(-1)[0];return `${pageHead('CHAMPION DOSSIER','Character Profiles','Explore how every build, team and rotation shaped each character’s performance.')}
-<div class="filters"><select id="profileSelect" class="select" style="min-width:240px">${[...new Set([...catalog.map(x=>x.name),...tests.map(x=>x.carry)])].sort().map(x=>`<option value="${esc(x)}" ${x===name?'selected':''}>${esc(x)}</option>`).join('')}</select>${rank>=0?`<span class="badge warn">RANK #${rank+1}</span>`:'<span class="badge">Unranked</span>'}</div>
-<div class="profile-summary">${avatar(name)}<div><h2>${esc(name)}</h2><div class="muted">${arr.length} recorded test${arr.length===1?'':'s'} · ${rank>=0?'Official ranked contender':'No qualifying standard test'}</div><div style="margin-top:8px"><span class="tag">Best team DPS: ${fmt(b?.dps)}</span></div></div></div>
-<div class="kpi-grid"><div class="kpi"><div class="kpi-label">Personal best DPS</div><div class="kpi-number">${fmt(b?.dps)}</div></div><div class="kpi"><div class="kpi-label">Largest recorded hit</div><div class="kpi-number">${fmt(topHit(name))}</div></div><div class="kpi"><div class="kpi-label">Peak carry damage</div><div class="kpi-number">${fmt(highestCarry(name))}</div></div><div class="kpi"><div class="kpi-label">Latest recorded test</div><div class="kpi-number" style="font-size:17px">${datefmt(latest?.date)}</div></div></div>
-<div class="split-panel"><div class="panel"><div class="panel-title">DAMAGE EVOLUTION</div>${chartSvg(arr.filter(t=>qualified(t)).sort(byDate))}<div class="note">Each point is one qualified team DPS test, not a controlled average.</div></div><div class="panel"><div class="panel-title">LATEST RECORDED BUILD</div>${[['Team',latest?.team],['Constellation',latest?.constellation],['Character level',latest?.level],['Weapon',latest?.weapon],['Talents',latest?.talents],['Supports',[latest?.support1,latest?.support2,latest?.support3].filter(Boolean).join(' / ')||null]].map(([a,b])=>`<div class="detail-cell" style="margin-bottom:7px"><div class="detail-label">${a}</div><div class="detail-value">${esc(b??'Unknown')}</div></div>`).join('')}</div></div>
-${b?window.DPSThroneDamage.card(b,avatar,{compact:true}):''}<div class="section-head"><h2 class="section-title">Full Test History</h2></div>${table(['Test ID','Date','Team','Team DPS','Duration','Peak hit','Evidence',''],arr.slice().reverse().map(t=>`<tr data-test="${esc(t.id)}"><td><strong>${esc(t.id)}</strong></td><td>${datefmt(t.date)}</td><td>${esc(t.team||'Unknown')}</td><td class="gold">${fmt(t.dps)}</td><td>${fmt(t.duration)}s</td><td>${fmt(t.highestHit)}</td><td>${verifyBadge(t)}</td><td>›</td></tr>`).join(''))}`}
+function profile(){
+ return window.DPSSupportProfiles.render({
+   name:champion||leaders()[0]?.carry||'',
+   tests,avatar,pageHead,table,fmt,esc,datefmt,chartSvg,verifyBadge
+ });
+}
 function duels(){let a=tests.find(x=>x.id===selectedA)||tests[0],b=tests.find(x=>x.id===selectedB)||tests[1]||tests[0];if(!a||!b)return '<div class="empty">No test records.</div>';const diff=num(b)-num(a),percent=num(a)?diff/num(a)*100:0;const warnings=[];if(a.duration!==b.duration)warnings.push(`Different durations (${fmt(a.duration)}s vs ${fmt(b.duration)}s)`);if(a.carry!==b.carry)warnings.push('Different on-field characters');if(a.team!==b.team||[a.support1,a.support2,a.support3].join('|')!==[b.support1,b.support2,b.support3].join('|'))warnings.push('Different team compositions or test types');if(a.constellation!==b.constellation)warnings.push('Different constellations');if(a.weapon!==b.weapon)warnings.push('Weapon or equipment descriptions differ');if(!a.date||!b.date)warnings.push('One or both test dates are unknown');return `${pageHead('HEAD-TO-HEAD','The Duel Lab','Two tests enter. One number wins. But only controlled comparisons tell you why.')}
 <div class="filters"><select class="select search" id="duelA">${tests.map(x=>`<option value="${esc(x.id)}" ${x.id===a.id?'selected':''}>${esc(x.carry)} · ${esc(x.id)} · ${fmt(x.dps)} DPS</option>`).join('')}</select><span class="tag">VS</span><select class="select search" id="duelB">${tests.map(x=>`<option value="${esc(x.id)}" ${x.id===b.id?'selected':''}>${esc(x.carry)} · ${esc(x.id)} · ${fmt(x.dps)} DPS</option>`).join('')}</select></div>
 <div class="duel-grid">${duelCard(a,num(a)>num(b))}<div class="versus">VS</div>${duelCard(b,num(b)>num(a))}</div>
