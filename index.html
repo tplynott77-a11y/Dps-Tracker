@@ -173,6 +173,7 @@ render();
    A Google Cloud Web OAuth client and HTTPS/localhost origin are required. */
 (()=>{'use strict';
 const DEFAULT_SHEET='1538QSbADzZf0p76qvC1dhhMk8RYO74I51l9G7nQSq_s';
+const DEFAULT_CLIENT='568556229750-ap39oagpjs6gu432tfghgupujfukdooq.apps.googleusercontent.com';
 const CFG='dps-throne-drive-config-v2';
 const LAST_SYNC='dps-throne-last-drive-sync';
 const SCOPE='https://www.googleapis.com/auth/spreadsheets.readonly';
@@ -229,7 +230,7 @@ function openPanel(){
  <p class="sync-line">Make your private <strong>Google Sheet the source of truth</strong>. Sign into your own Google account and refresh the site's leaderboard and test archive from the latest Test Log. This connection is <strong>read-only</strong>.</p>
  <div class="form-grid">
   <div class="field span3"><label class="sync-label" for="driveSheet">Google Spreadsheet ID</label><input class="input" id="driveSheet" value="${esc(cfg.sheet||DEFAULT_SHEET)}" autocomplete="off" spellcheck="false"></div>
-  <div class="field span3"><label class="sync-label" for="driveClient">Google OAuth 2.0 Web Client ID</label><input class="input" id="driveClient" value="${esc(cfg.client||'')}" placeholder="Your Web client ID ending in .apps.googleusercontent.com" autocomplete="off" spellcheck="false"></div>
+  <div class="field span3"><label class="sync-label" for="driveClient">Google OAuth 2.0 Web Client ID</label><input class="input" id="driveClient" value="${esc(cfg.client||DEFAULT_CLIENT)}" placeholder="Your Web client ID ending in .apps.googleusercontent.com" autocomplete="off" spellcheck="false"></div>
  </div>
  <div class="sync-help">${onFile?'<strong>Important:</strong> Drive Sign-in cannot run by directly opening an HTML file. Host the website on HTTPS, or serve it from localhost first. The offline leaderboard will still work here.':(!isValidOrigin?'<strong>Sign-in requires HTTPS (or localhost).</strong>':'<strong>Private sync via Google:</strong> Your access token remains in browser memory and is never saved to disk.')}
  <p>One-time setup: in <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a>, enable <strong>Google Sheets API</strong>, configure <strong>Google Auth Platform</strong>, and create an <strong>OAuth client ID → Web application</strong>. Add the website's origin to <strong>Authorized JavaScript origins</strong> (on this page: <code>${esc(location.origin||'file://')}</code>). If your OAuth app is in testing, add your Google account as a test user.</p>
