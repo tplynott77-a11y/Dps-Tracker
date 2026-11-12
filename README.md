@@ -58,3 +58,11 @@ The support-damage fields and test-note parser underpin the Damage Lab. At the l
 
 ## How the Chronicle works
 The chronological sequence uses the **test date** and, only to break same-day ties, the row order from the private Test Log. A test without a known date cannot be placed in history. Only 60-second tests (plus the player-approved MIT-00A exception) are eligible. The earliest dated leader is not claimed to be the account's first-ever champion. The longest *superseded* record is measured in whole calendar days between two logged record improvements; the current record has no invented end date. The website's existing Google OAuth sign-in stays read-only, so all new stats are recalculated in your browser rather than stored publicly.
+
+## Visual asset registry (Farming Operations)
+
+Farming uses a single, shared `genshin-icons.js` registry instead of hand-written image links in individual views. It maps GOOD equipment/material keys to their game UI icon IDs (252 weapons, 824 materials, 63 artifact sets, all five artifact slots) using the open-source [gi-organizer Genshin data catalogue](https://github.com/3FE3LE/gi-organizer), and preserves official English item names. On the site, icons are loaded from Enka's documented `https://enka.network/ui/<icon>.png` endpoint, with a Hakush/Nanoka UI asset URL as a fallback and a neutral symbol for unknown or unavailable art. Artwork and game trademarks belong to HoYoverse / COGNOSPHERE. The site is independent and is not affiliated with them or with Enka.
+
+The icon system is used in the **Mora and Hero's Wit dashboard cards**, **Original Resin planning card**, **weapon portraits**, **artifact slots**, **inventory lists**, **material shortages**, **resin activity rows**, and **fieldwork**. Icons are loaded lazily where possible. Inventory search understands both exact source Sheet keys (e.g., `HerosWit`) and their official display names (e.g., *Hero's Wit*). Unmapped tracker fields and some fishing resources have a plain symbol; never substitute an incorrect item illustration.
+
+The icon registry stores **public game identifiers only**, not the player's private inventory or build snapshot. Farming authentication remains read-only, and the existing DPS Throne's data and pages are unchanged.
