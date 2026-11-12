@@ -18,6 +18,24 @@ const mainStat=x=>{
  return name(k);
 };
 const fmt=n=>n===null||n===undefined||n===''?'—':Number(n).toLocaleString('en-IE');
+/* GOOD scan substats are either semicolon-separated "key: value" strings
+   from the private Sheet, or key/value pairs from a local GOOD import. */
+function formatSubstats(raw){
+ const pairs=Array.isArray(raw)
+  ?raw.map(x=>Array.isArray(x)?{key:x[0],value:x[1]}:x&&typeof x==='object'?{key:x.key,value:x.value}:null).filter(Boolean)
+  :val(raw).split(';').map(part=>{
+     const split=part.indexOf(':');
+     return split<0?null:{key:part.slice(0,split).trim(),value:part.slice(split+1).trim()};
+   }).filter(Boolean);
+ return pairs.filter(p=>val(p.key)&&val(p.value)).map(p=>{
+   const key=val(p.key),percent=key.endsWith('_'),label=mainStat(key).replace(/%$/,'');
+   const original=val(p.value),n=Number(original.replace(/,/g,'').replace(/%$/,''));
+   const formatted=Number.isFinite(n)
+    ? (n>=0?'+':'−')+Math.abs(n).toLocaleString('en-IE',{maximumFractionDigits:2})+(percent?'%':'')
+    : original;
+   return '<div class="farm-substat"><span class="farm-substat-name">'+esc(label)+'</span><strong class="farm-substat-value">'+esc(formatted)+'</strong></div>';
+ }).join('');
+}
 function gameIcon(kind,key,slot='',size='md'){
  return window.FarmingGameIcons?.tag?.(kind,key,{slot,size,title:name(key)})||'<span class="farm-game-icon '+size+'">✦</span>';
 }
@@ -98,8 +116,8 @@ function renderProfile(key,d,utils){
  const artifactView=slots.map(([slot,slotLabel])=>{
   const a=artifactMap.get(slot);
   if(!a)return '<div class="farm-artifact empty"><div class="farm-artifact-label">'+slotLabel+'</div><div class="farm-artifact-none">'+(b.verifiedEmpty?'None equipped in scan':'Not recorded in available scan')+'</div></div>';
-  const sub=Array.isArray(a.substats)?a.substats.map(x=>Array.isArray(x)?[mainStat(x[0]),x[1]].join(' '):x).join(' · '):val(a.substats);
-  return '<div class="farm-artifact"><div class="farm-artifact-label">'+slotLabel+' <span>+'+esc(a.level??'?')+'</span></div><div class="farm-artifact-set">'+gameIcon('artifact',a.set,slot,'lg')+'<strong>'+esc(name(a.set))+'</strong></div><div class="farm-artifact-main">'+esc(mainStat(a.main))+'</div>'+(sub&&sub!=='Not transcribed from available extract'?'<small>'+esc(sub)+'</small>':'')+'</div>';
+  const sub=formatSubstats(a.substats);
+  return '<div class="farm-artifact"><div class="farm-artifact-label">'+slotLabel+' <span>+'+esc(a.level??'?')+'</span></div><div class="farm-artifact-set">'+gameIcon('artifact',a.set,slot,'lg')+'<strong>'+esc(name(a.set))+'</strong></div><div class="farm-artifact-main">'+esc(mainStat(a.main))+'</div>'+(sub?'<div class="farm-substats">'+sub+'</div>':'')+'</div>';
  }).join('');
  const active=goals.filter(g=>val(g.status).toLowerCase()==='active').length,done=goals.filter(g=>val(g.status).toLowerCase()==='done').length;
  const goalList=goals.length?goals.map(g=>{
