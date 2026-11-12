@@ -136,3 +136,12 @@ body.archive-mode .mobile-nav button.active,body.farming-mode .mobile-nav button
 @media(max-width:1250px){.farm-project-layout{grid-template-columns:1fr}.farm-detail{position:static;max-height:none}}
 @media(max-width:880px){.farm-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.archives-cards{gap:12px}.archives-tile{padding:21px;min-height:370px}.archives-tile strong{font-size:21px}}
 @media(max-width:700px){.farm-deptbar small{display:none}.farm-deptbar a{font-size:10px}.farm-connect{flex-wrap:wrap;padding:15px}.farm-connect .farm-btn{width:100%}.farm-op{align-items:flex-start;flex-wrap:wrap;padding:17px}.farm-op>.farm-btn{width:100%}.farm-dual{grid-template-columns:1fr}.farm-metrics{gap:8px}.farm-metric{padding:13px}.farm-metric strong{font-size:22px}.archives-cards{grid-template-columns:1fr}.archives-tile{min-height:290px;padding:25px}.archives-tile strong{font-size:25px}.archives-cross{flex-wrap:wrap}.archives-cross button{width:100%}.farm-sectionhead h2{font-size:18px}.farm-subnav{padding-bottom:13px}.farm-subnav button{padding:9px 11px;font-size:11px}.farm-field-grid{grid-template-columns:1fr}}
+
+/* Shared navigation needs its own scroll area as two departments grow. */
+.sidebar{overflow:hidden}
+.sidebar .brand{margin-bottom:25px}
+.sidebar #nav{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#4d604d transparent;align-content:start;padding-right:4px}
+.sidebar .nav-link{padding:10px 11px}
+.sidebar-bottom{flex:none;padding-top:7px}
+body.archive-mode .top-actions,body.farming-mode .top-actions{display:none}
+@media(max-width:780px){.sidebar{display:none}.archive-mode .topbar-inner,.farming-mode .topbar-inner{height:57px}}
