@@ -62,7 +62,8 @@ function iconForItem(key,size='sm',kind='material',slot=''){
  return helper?.tag?.(kind,key,{size,slot,title:String(key||'Item')})||'<span class="farm-game-icon '+size+'">◆</span>';
 }
 function itemHtml(key,size='sm'){
- return '<span class="farm-resource-label">'+iconForItem(key,size)+'<span>'+esc(key)+'</span></span>';
+ const display=window.FarmingGameIcons?.nameFor?.(key)||String(key??'');
+ return '<span class="farm-resource-label" title="'+esc(key)+'">'+iconForItem(key,size)+'<span>'+esc(display)+'</span></span>';
 }
 function badge(tag,value,sub,iconKey=''){
  return '<div class="farm-metric'+(iconKey?' farm-metric-illustrated':'')+'">'
@@ -121,7 +122,7 @@ function projects(){
 }
 function materials(){
  if(!state.data)return '<div class="farm-surface">'+head('RESOURCE LEDGER','Material Inventory','Sync your private source spreadsheet to load inventory.')+connectBanner()+'</div>';
- const d=state.data,items=d.inventory.filter(x=>lower(x.key).includes(lower(state.stockSearch))),more=items.length>state.stockShow;
+ const d=state.data,items=d.inventory.filter(x=>lower(x.key+' '+(window.FarmingGameIcons?.nameFor?.(x.key)||'')).includes(lower(state.stockSearch))),more=items.length>state.stockShow;
  const req=d.requirements.filter(r=>lower(r.status)==='active'&&r.needed>0).sort((a,b)=>(b.needed||0)-(a.needed||0));
  return '<div class="farm-surface">'+head('RESOURCE LEDGER','Materials & Inventory','Separate current planning stock from older scan counts. Unverified quantities remain estimates until checked in-game.')+connectBanner()
  +'<div class="farm-metrics">'+badge('Material keys',fmt(d.inventory.length),'Present in source inventory')+badge('Active shortages',fmt(req.length),'Requirement lines')+badge('Unverified counts',fmt(d.counters['Unverified stock entries']),'Source dashboard estimate')+'</div>'
