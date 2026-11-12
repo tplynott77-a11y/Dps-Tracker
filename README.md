@@ -4,6 +4,8 @@ A personal Genshin Impact DPS testing hall of fame, published as a static websit
 
 ## Features
 - Leaderboard, character profiles, full test archive, head-to-head comparisons and test protocol
+- **All Characters** gallery with 117 official Genshin Impact in-game character icon references, elemental filters, search and quick access to tested or untested characters
+- Official game-asset portraits in the leaderboard, podium, test archive, profile views and duel comparisons; missing images fall back to initials, never fan art
 - Read-only Google Sheets synchronisation via your own Google sign-in
 - Browser-local cache and data exports; no account-owned database or backend
 - Test timing and evidence badges, including the approved Mitya 67.47-second exception
@@ -16,3 +18,6 @@ See [SETUP.md](SETUP.md) for GitHub Pages and Google OAuth setup. The homepage i
 Source spreadsheet (requires access): https://docs.google.com/spreadsheets/d/1538QSbADzZf0p76qvC1dhhMk8RYO74I51l9G7nQSq_s/edit
 
 Built for the Bankruptcy Archives. The throne cannot survive on spreadsheets alone.
+
+## Artwork provenance
+Character names and internal UI image identifiers are based on the Genshin Impact game data exposed through [EnkaNetwork's public API documentation](https://github.com/EnkaNetwork/API-docs). Artwork is © COGNOSPHERE / HoYoverse. This is a non-commercial fan project; **no fan art** is used. Images are remotely loaded from game-asset mirrors (Enka.Network, Hakush.in, and Project Amber) and are not copied into this repository. Newly released characters may display initial-based placeholders until their official UI icons are available on a mirror.
