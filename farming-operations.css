@@ -204,3 +204,62 @@ body.farming-mode .sidebar .divider-line,body.archive-mode .sidebar .divider-lin
 @media(max-width:1050px){.farm-roster-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.farm-roster-filters{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px;gap:10px}.farm-filter-search{grid-column:1/-1}.farm-char-main .farm-element{margin:4px 0 1px}}
 @media(max-width:340px){.farm-roster-filters{grid-template-columns:1fr}.farm-filter-search{grid-column:auto}}
+
+/* BUILD DOSSIERS · quiet, readable character equipment profiles */
+.farm-char-link{font:inherit;text-align:left;cursor:pointer;width:100%;transition:transform .16s,border-color .16s,box-shadow .16s;align-items:center}
+.farm-char-link:hover{border-color:#a0c4ac;box-shadow:0 5px 18px #50795c1c;transform:translateY(-2px)}
+.farm-char-link:focus-visible{outline:3px solid #95bba1;outline-offset:3px}
+.farm-char-buildlink{display:inline-block;margin-top:5px;color:#458064;font-size:10px;font-weight:900}
+.farm-dossier{max-width:1160px}
+.farm-profile-back{border:0;background:#e5efe5;color:#47755b;padding:9px 12px;font-weight:800;font-size:12px;border-radius:9px;margin:5px 0 20px}
+.farm-profile-back:hover{background:#d8e8da}
+.farm-dossier-hero{display:flex;gap:20px;align-items:center;border:1px solid #d3e6d6;background:linear-gradient(110deg,#eff7ee,#e0efe3);padding:26px;border-radius:18px;box-shadow:0 6px 21px #6f99751a}
+.farm-dossier-hero>.farm-portrait{width:100px;height:100px;border-radius:18px;font-size:40px;background:#cfe5d4;border:2px solid #bdd9c5}
+.farm-dossier-hero h1{font-family:'Cinzel',Georgia,serif;color:#365c46;margin:7px 0;font-size:clamp(23px,3vw,34px)}
+.farm-dossier-hero p{color:#718d7b;font-size:12px;margin:5px 0 12px;line-height:1.55}
+.farm-dossier-tags{display:flex;flex-wrap:wrap;gap:7px}
+.farm-dossier-tags span{display:inline-block;border:1px solid #b7d5c0;border-radius:8px;background:#f7fbf4;color:#4d795b;font-size:11px;font-weight:850;padding:6px 10px}
+.farm-dossier-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:16px 0 26px}
+.farm-build-stat{display:flex;flex-direction:column;gap:8px;background:#fff;border:1px solid #dae7dc;padding:17px;border-radius:12px}
+.farm-build-stat span{font-size:11px;font-weight:750;color:#829c88}
+.farm-build-stat strong{font-size:19px;font-weight:850;color:#3d6650;overflow-wrap:anywhere}
+.farm-build-section{border:1px solid #d9e7dc;background:#fff;border-radius:15px;padding:22px;margin:18px 0}
+.farm-build-heading{display:flex;align-items:center;justify-content:space-between;gap:13px;margin:0 0 14px}
+.farm-build-heading h2{color:#365b47;font-family:'Cinzel',Georgia,serif;font-size:21px;margin:6px 0}
+.farm-build-heading h3{font-size:15px;color:#456b55;margin:0}
+.farm-build-heading small,.farm-build-provenance{font-size:11px;color:#88a08c;line-height:1.5;text-align:right}
+.farm-weapon-card{display:flex;gap:14px;align-items:center;padding:15px;border-radius:13px;background:#f1f6ee;border:1px solid #dbe9da;margin-bottom:24px}
+.farm-weapon-symbol{background:#e0ebde;color:#758b52;font-size:26px;display:grid;place-items:center;border-radius:10px;flex:0 0 58px;height:58px}
+.farm-weapon-card>div:nth-child(2){display:flex;flex-direction:column;gap:4px}
+.farm-weapon-card small{font-size:11px;color:#8fa08b}
+.farm-weapon-card strong{font-size:16px;color:#476d51}
+.farm-weapon-card span{font-size:12px;color:#698873}
+.farm-artifact-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.farm-artifact{border:1px solid #d9e6dc;background:#fcfdfa;border-radius:12px;padding:14px;min-height:157px;overflow-wrap:anywhere}
+.farm-artifact-label{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:11px;color:#869d8e;font-weight:800;margin-bottom:12px}
+.farm-artifact-label span{padding:3px 7px;background:#e2efde;color:#5d855e;border-radius:7px}
+.farm-artifact strong{display:block;font-size:12px;color:#3e7053;line-height:1.5}
+.farm-artifact-main{font-size:12px;color:#9b824f;font-weight:850;margin:9px 0}
+.farm-artifact small{font-size:10px;line-height:1.7;color:#849d8e;display:block}
+.farm-artifact.empty{background:#f8faf6;border-style:dashed;border-color:#cfded1}
+.farm-artifact-none{font-size:11px;color:#9aab9b;line-height:1.6;margin-top:15px}
+.farm-build-report{font-size:12px;line-height:1.7;padding:13px 15px;border-radius:9px;background:#f5f7ed;border-left:3px solid #b9c4a4;color:#7c8974;margin:14px 0 0}
+.farm-build-report strong{color:#59705b}
+.farm-build-goal-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.farm-build-goal{border:1px solid #dce8dc;background:#fbfdfa;padding:16px;border-radius:11px;min-width:0}
+.farm-build-goal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:11px}
+.farm-build-goal-head strong{font-size:13px;color:#3e674f;line-height:1.5;overflow-wrap:anywhere}
+.farm-build-goal p{font-size:12px;color:#708a78;line-height:1.6;margin:10px 0 5px}
+.farm-build-goal small{font-size:11px;color:#8ea392;line-height:1.5}
+.farm-goal-shortages{font-size:11px;border-top:1px solid #e0e8db;margin-top:13px;padding-top:10px;color:#a17a4a}
+.farm-build-actions{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0}
+.farm-import-section{background:#f6faf4}
+.farm-import-section h3{font-family:'Cinzel',Georgia,serif;color:#447155;font-size:18px;margin:8px 0}
+.farm-import-section p{font-size:12px;color:#7a9382;line-height:1.8;max-width:780px}
+.farm-import-button{display:inline-flex;align-items:center;border:1px solid #a7c5ac;border-radius:10px;color:#3e7658;background:#e6f2e5;cursor:pointer;padding:11px 17px;font-size:12px;font-weight:800;margin:12px 0}
+.farm-import-button:hover{background:#d5ead6}
+#farmGoodFile{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}
+.farm-import-message{font-size:11px;color:#708b78}
+@media(max-width:1200px){.farm-artifact-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:780px){.farm-artifact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.farm-build-goal-list{grid-template-columns:1fr}}
+@media(max-width:560px){.farm-dossier-hero{padding:16px;gap:13px}.farm-dossier-hero>.farm-portrait{width:68px;height:68px;font-size:29px}.farm-dossier-metrics{grid-template-columns:1fr 1fr}.farm-dossier-metrics .farm-build-stat:last-child{grid-column:1/-1}.farm-build-section{padding:15px}.farm-artifact-grid{grid-template-columns:1fr}.farm-artifact{min-height:0}.farm-build-heading{flex-wrap:wrap}.farm-build-provenance{text-align:left}.farm-weapon-card{padding:12px}.farm-import-button{width:100%;justify-content:center}}
