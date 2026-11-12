@@ -104,7 +104,7 @@ const avatar=(name,mini=false)=>{
   if(!art||!/^[A-Za-z0-9_]+$/.test(art.icon))return outer+'</span>';
   const src='https://enka.network/ui/'+art.icon+'.png';
   const side=/^[A-Za-z0-9_]+$/.test(art.side||'')?'https://enka.network/ui/'+art.side+'.png':'';
-  return outer+'<img class="character-icon" loading="lazy" decoding="async" alt="" src="'+esc(src)+'" data-side="'+esc(side)+'"></span>';
+  return outer+'<img class="character-icon" loading="lazy" decoding="async" alt="" src="'+esc(src)+'" data-side="'+esc(side)+'" data-game-icon="'+esc(art.icon)+'" data-game-side="'+esc(art.side||'')+'"></span>';
 };
 const standard=t=>Math.abs(Number(t.duration)-60)<.05||t.id==='MIT-00A';
 const qualified=t=>standard(t)&&n(t.dps)!==null;
@@ -190,7 +190,19 @@ function parseCSV(txt){const result=[],rows=[];let cur='',row=[],quote=false;txt
 document.addEventListener('error',e=>{
   const img=e.target;
   if(!(img instanceof HTMLImageElement)||!img.classList.contains('character-icon'))return;
-  if(!img.dataset.retried&&img.dataset.side){img.dataset.retried='yes';img.src=img.dataset.side;return}
+  const front=img.dataset.gameIcon||'',side=img.dataset.gameSide||'';
+  const candidate=(host,asset,ext)=>/^[A-Za-z0-9_]+$/.test(asset)?host+asset+ext:null;
+  // Only original Genshin in-game UI icons. Try three game-asset mirrors; never fan art.
+  const urls=[
+    candidate('https://enka.network/ui/',front,'.png'),
+    candidate('https://enka.network/ui/',side,'.png'),
+    candidate('https://static.nanoka.cc/gi/UI/',front,'.webp'),
+    candidate('https://static.nanoka.cc/gi/UI/',side,'.webp'),
+    candidate('https://gi.yatta.moe/assets/UI/',front,'.png'),
+    candidate('https://gi.yatta.moe/assets/UI/',side,'.png')
+  ].filter(Boolean);
+  const nextIndex=Number(img.dataset.sourceIndex||0)+1;
+  if(nextIndex<urls.length){img.dataset.sourceIndex=String(nextIndex);img.src=urls[nextIndex];return}
   img.closest('.portrait-avatar')?.classList.add('image-failed');
   img.removeAttribute('src');
 },true);
