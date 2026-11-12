@@ -15,7 +15,7 @@ const tabs=[
 ['characters',"'Characters'!A4:G112"],
 ['dashboard',"'Dashboard'!A4:E9"]
 ];
-const state={data:null,lastSync:null,source:'none',working:false,error:'',selected:0,search:'',filter:'all',stockSearch:'',fieldSearch:'',stockShow:60};
+const state={data:null,lastSync:null,source:'none',working:false,error:'',selected:0,search:'',filter:'all',stockSearch:'',fieldSearch:'',stockShow:60,resinFilter:'active'};
 const esc=v=>String(v===null||v===undefined?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const val=v=>String(v===null||v===undefined?'':v).trim();
 const num=v=>{const x=Number(val(v).replace(/,/g,''));return v===undefined||v===null||val(v)===''||!Number.isFinite(x)?null:x};
@@ -67,7 +67,7 @@ function overview(){
  +operationCard()
  +'<div class="farm-sectionhead"><div><div class="farm-eyebrow">YOUR NEXT MOVES</div><h2>Priority Queue</h2><p>Automatically ordered by the source spreadsheet</p></div><button type="button" class="farm-textlink" data-farm-nav="farm-projects">All projects →</button></div>'
  +'<div class="farm-stack">'+d.priorities.slice(0,5).map(queueCard).join('')+'</div>'
- +'<div class="farm-dual"><div class="farm-shortcuts"><div class="farm-eyebrow">RESOURCE INTELLIGENCE</div><h3>Material shortages</h3><p>See exactly which known requirement lines still need materials. Stock numbers are planning snapshots, not live inventory.</p><button type="button" class="farm-btn secondary" data-farm-nav="farm-materials">Explore materials →</button></div><div class="farm-shortcuts"><div class="farm-eyebrow">NO RESIN REQUIRED</div><h3>Overworld objectives</h3><p>'+fmt(d.field.filter(f=>f.needed>0).length)+' gathering lines with shortages in your farming tracker.</p><button type="button" class="farm-btn secondary" data-farm-nav="farm-field">Explore objectives →</button></div></div>'
+ +'<div class="farm-dual"><div class="farm-shortcuts"><div class="farm-eyebrow">RESOURCE INTELLIGENCE</div><h3>Material shortages</h3><p>See exactly which known requirement lines still need materials. Stock numbers are planning snapshots, not live inventory.</p><div class="farm-shortcut-actions"><button type="button" class="farm-btn secondary" data-farm-nav="farm-materials">Explore materials →</button><button type="button" class="farm-btn secondary" data-farm-nav="farm-resin">Resin planner →</button></div></div><div class="farm-shortcuts"><div class="farm-eyebrow">NO RESIN REQUIRED</div><h3>Overworld objectives</h3><p>'+fmt(d.field.filter(f=>f.needed>0).length)+' gathering lines with shortages in your farming tracker.</p><button type="button" class="farm-btn secondary" data-farm-nav="farm-field">Explore objectives →</button></div></div>'
  +'<p class="farm-fineprint">'+fmt(done)+' completed projects retained in the source Sheet · '+fmt(d.characters.length)+' roster entries · '+fmt(d.inventory.length)+' inventory keys loaded. No materials have been deducted by this website.</p></div>';
 }
 function projectDetail(p){
@@ -99,6 +99,25 @@ function materials(){
  +'<div class="farm-sectionhead"><h2>Active Material Bottlenecks</h2><p>'+fmt(req.length)+' lines</p></div><div class="farm-table-wrap"><table><thead><tr><th>Project</th><th>Material</th><th>Needed</th><th>Acquisition</th></tr></thead><tbody>'+req.slice(0,35).map(x=>'<tr><td>'+esc(x.goal)+'</td><td>'+esc(x.material)+'</td><td class="farm-shortage">'+fmt(x.needed)+'</td><td>'+esc(x.method)+'</td></tr>').join('')+'</tbody></table></div>'
  +'<p class="farm-fineprint">All counts are taken from the existing planning worksheet. The website does not deduct stock, reinterpret old scans as live totals, or claim a material is definitely absent when unverified.</p></div>';
 }
+function resin(){
+ if(!state.data)return '<div class="farm-surface">'+head('PLANNING DESK','Resin Operations','Connect Google Sheets to review material bottlenecks and domain opportunities.')+connectBanner()+'</div>';
+ const d=state.data,priorities=new Map(d.priorities.map(p=>[p.goal,p]));
+ const all=d.requirements.filter(r=>r.needed!==null&&r.needed>0&&lower(r.status)===state.resinFilter)
+  .sort((a,b)=>(priorities.get(a.goal)?.rank??999)-(priorities.get(b.goal)?.rank??999)||b.needed-a.needed);
+ const resinFields=all.filter(r=>/domain|boss|ley line/i.test(r.method));
+ const others=all.filter(r=>!/domain|boss|ley line/i.test(r.method));
+ const group=new Map;
+ for(const r of resinFields){const activity=r.method||'Unspecified source';if(!group.has(activity))group.set(activity,[]);group.get(activity).push(r)}
+ const options=[['active','Active goals'],['later','Later goals']];
+ const item=r=>'<div class="farm-resin-row"><div><strong>'+esc(r.material)+'</strong><small>'+esc(r.goal)+'</small></div><span class="farm-shortage">'+fmt(r.needed)+' needed</span></div>';
+ return '<div class="farm-surface">'+head('PLANNING DESK','Resin Operations','Know which documented shortages deserve your resin. This is a priority-led plan, not a prediction of random material drops.')
+  +connectBanner()+'<div class="farm-filters"><label class="farm-resin-caption" for="farmResinFilter">Planning lane</label><select id="farmResinFilter" class="farm-input">'+options.map(([id,text])=>'<option value="'+id+'"'+(state.resinFilter===id?' selected':'')+'>'+text+'</option>').join('')+'</select></div>'
+  +'<div class="farm-metrics">'+badge('Resin activity shortages',fmt(resinFields.length),'Material lines')+badge('Other outstanding items',fmt(others.length),'Overworld, Mora, EXP, etc.')+badge('Relevant activity types',fmt(group.size),'From the source Sheet')+'</div>'
+  +'<div class="farm-sectionhead"><div><div class="farm-eyebrow">SOURCE-VERIFIED ACQUISITION</div><h2>Priority Farming Activities</h2><p>Schedules shown below are copied from your sheet, not live domain-availability checks</p></div></div>'
+  +(resinFields.length?'<div class="farm-activity-grid">'+[...group].map(([method,items])=>'<article class="farm-activity"><div class="farm-activity-top"><span>♧</span><strong>'+esc(method)+'</strong><small>'+items.length+' outstanding lines</small></div>'+items.map(item).join('')+'</article>').join('')+'</div>':'<div class="farm-empty">No qualifying resin-domain or boss shortages are currently listed in this project lane.</div>')
+  +'<div class="farm-sectionhead"><h2>Other Bottlenecks</h2></div><div class="farm-activity-grid">'+[...new Map(others.map(r=>[r.method,r.method])).keys()].map(method=>'<article class="farm-activity"><div class="farm-activity-top"><span>◎</span><strong>'+esc(method||'Other acquisition')+'</strong></div>'+others.filter(r=>r.method===method).slice(0,16).map(item).join('')+'</article>').join('')+'</div>'
+  +'<p class="farm-fineprint">These needs are copied from the existing Requirements formulas. Stock reservations and crafting conversions remain governed by that Sheet. No resin, currency or materials are spent here. Estimated claims or farming days are deliberately omitted until drop-rate assumptions are verified.</p></div>';
+}
 function field(){
  if(!state.data)return '<div class="farm-surface">'+head('RESIN-FREE OBJECTIVES','Overworld Fieldwork','Connect the tracker to see tasks and collection goals.')+connectBanner()+'</div>';
  const d=state.data,arr=d.field.filter(r=>lower(r.goal+' '+r.task+' '+r.material+' '+r.type).includes(lower(state.fieldSearch))).sort((a,b)=>(a.priority??999)-(b.priority??999));
@@ -113,8 +132,8 @@ function characters(){
  +'<div class="farm-filters"><input type="search" id="farmSearch" class="farm-input" aria-label="Search characters" placeholder="Find a character…" value="'+esc(state.search)+'"></div><div class="farm-character-grid">'+items.map(c=>'<div class="farm-char">'+portrait(c.name)+'<div><h3>'+esc(c.name)+'</h3><p>Lv '+esc(c.level)+' · C'+esc(c.cons)+' · Asc '+esc(c.asc)+'</p><span>Talents '+esc([c.na,c.skill,c.burst].join(' / '))+'</span></div></div>').join('')+'</div><p class="farm-fineprint">Character tab is a historical scan with later progress recorded elsewhere. For the latest verified upgrade, check Projects and its source evidence.</p></div>';
 }
 function render(page){
- let html=page==='farm-projects'?projects():page==='farm-materials'?materials():page==='farm-field'?field():page==='farm-characters'?characters():overview();
- const nav=[['farming','Command Centre'],['farm-projects','Projects'],['farm-materials','Inventory'],['farm-field','Fieldwork'],['farm-characters','Characters']];
+ let html=page==='farm-projects'?projects():page==='farm-materials'?materials():page==='farm-resin'?resin():page==='farm-field'?field():page==='farm-characters'?characters():overview();
+ const nav=[['farming','Command Centre'],['farm-projects','Projects'],['farm-materials','Inventory'],['farm-resin','Resin Planner'],['farm-field','Fieldwork'],['farm-characters','Characters']];
  return '<section class="farm-root"><div class="farm-deptbar"><span>💸 BANKRUPTCY ARCHIVES</span><small>FARMING OPERATIONS · READ-ONLY MASTER SYNC</small><a href="'+SOURCE+'" target="_blank" rel="noopener noreferrer">Open Source Sheet ↗</a></div><nav class="farm-subnav">'+nav.map(([id,label])=>'<button type="button" class="'+(page===id?'selected':'')+'" data-farm-nav="'+id+'">'+label+'</button>').join('')+'</nav>'+html+'</section>';
 }
 function hub(){
@@ -158,6 +177,7 @@ function maybeRefresh(){if(state.working)return;if(state.source==='none'&&freshT
 document.addEventListener('click',e=>{
  const nav=e.target.closest('[data-farm-nav]');if(nav){state.search='';window.BankruptcyArchives?.navigate?.(nav.dataset.farmNav);return}
  if(e.target.closest('[data-farm-sync]')){connect();return}
+ const character=e.target.closest('[data-farm-character]');if(character){state.search=character.dataset.farmCharacter;window.BankruptcyArchives?.navigate?.('farm-projects');return}
  const item=e.target.closest('[data-farm-item]');if(item){state.selected=num(item.dataset.farmItem);window.BankruptcyArchives?.navigate?.('farm-projects');return}
  if(e.target.closest('[data-farm-more]')){state.stockShow+=100;refresh();return}
 });
@@ -168,6 +188,6 @@ document.addEventListener('input',e=>{
  if(id==='farmSearch')state.search=value;else if(id==='farmFieldSearch')state.fieldSearch=value;else state.stockSearch=value;
  refresh();const node=document.getElementById(id);if(node){node.focus();try{node.setSelectionRange(pos,pos)}catch(e){}}
 });
-document.addEventListener('change',e=>{if(e.target.id==='farmFilter'){state.filter=e.target.value;refresh()}});
+document.addEventListener('change',e=>{if(e.target.id==='farmFilter'){state.filter=e.target.value;refresh()}if(e.target.id==='farmResinFilter'){state.resinFilter=e.target.value;refresh()}});
 window.FarmingOperations={render,hub,sync:connect,maybeRefresh,getData:()=>state.data,getStatus:()=>({source:state.source,lastSync:state.lastSync})};
 })();
