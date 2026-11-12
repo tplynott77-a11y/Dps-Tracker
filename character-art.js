@@ -1,16 +1,15 @@
-/* THE DPS THRONE CHARACTER GALLERY
-   Names and image identifiers: EnkaNetwork/API-docs Genshin game asset metadata, plus
-   the official in-game UI icon identifiers for newer 2026 characters.
-   Artwork is from Genshin Impact itself, delivered via https://enka.network/ui/.
-   This website does NOT use fan art. Images remain © COGNOSPHERE/HoYoverse.
-   Missing/unavailable icons fall back to initials, never to fan-created artwork.
-   To extend the roster, add game-asset identifiers, never unverified art URLs. */
+/* DPS Throne official game portrait references.
+   EnkaNetwork/API-docs Genshin data; plus additional official in-game UI icon
+   names for Snezhnaya and later playable characters referenced by Genshin's
+   game assets and HoYoLAB's roster. Artwork © COGNOSPHERE/HoYoverse.
+   No fan art or unofficial reinterpretations. Unavailable icons fall back to initials.
+   Source documentation: https://github.com/EnkaNetwork/API-docs */
 window.DPS_CHARACTER_CATALOG = [
   {
     "name": "Aether",
     "icon": "UI_AvatarIcon_PlayerBoy",
     "side": "UI_AvatarIcon_Side_PlayerBoy",
-    "element": "Anemo"
+    "element": "Multi-element"
   },
   {
     "name": "Aino",
@@ -35,6 +34,12 @@ window.DPS_CHARACTER_CATALOG = [
     "icon": "UI_AvatarIcon_Aloy",
     "side": "UI_AvatarIcon_Side_Aloy",
     "element": "Cryo"
+  },
+  {
+    "name": "Alyosha",
+    "icon": "UI_AvatarIcon_Alyosha",
+    "side": "UI_AvatarIcon_Side_Alyosha",
+    "element": "Electro"
   },
   {
     "name": "Amber",
@@ -271,6 +276,12 @@ window.DPS_CHARACTER_CATALOG = [
     "element": "Anemo"
   },
   {
+    "name": "Illuga",
+    "icon": "UI_AvatarIcon_Illuga",
+    "side": "UI_AvatarIcon_Side_Illuga",
+    "element": "Geo"
+  },
+  {
     "name": "Ineffa",
     "icon": "UI_AvatarIcon_Ineffa",
     "side": "UI_AvatarIcon_Side_Ineffa",
@@ -379,16 +390,28 @@ window.DPS_CHARACTER_CATALOG = [
     "element": "Cryo"
   },
   {
+    "name": "Linnea",
+    "icon": "UI_AvatarIcon_Linnea",
+    "side": "UI_AvatarIcon_Side_Linnea",
+    "element": "Geo"
+  },
+  {
     "name": "Lisa",
     "icon": "UI_AvatarIcon_Lisa",
     "side": "UI_AvatarIcon_Side_Lisa",
     "element": "Electro"
   },
   {
+    "name": "Lohen",
+    "icon": "UI_AvatarIcon_Lohen",
+    "side": "UI_AvatarIcon_Side_Lohen",
+    "element": "Cryo"
+  },
+  {
     "name": "Lumine",
     "icon": "UI_AvatarIcon_PlayerGirl",
     "side": "UI_AvatarIcon_Side_PlayerGirl",
-    "element": "Anemo"
+    "element": "Multi-element"
   },
   {
     "name": "Lynette",
@@ -463,6 +486,12 @@ window.DPS_CHARACTER_CATALOG = [
     "element": "Hydro"
   },
   {
+    "name": "Nicole",
+    "icon": "UI_AvatarIcon_Nicole",
+    "side": "UI_AvatarIcon_Side_Nicole",
+    "element": "Pyro"
+  },
+  {
     "name": "Nilou",
     "icon": "UI_AvatarIcon_Nilou",
     "side": "UI_AvatarIcon_Side_Nilou",
@@ -481,10 +510,22 @@ window.DPS_CHARACTER_CATALOG = [
     "element": "Geo"
   },
   {
+    "name": "Odette",
+    "icon": "UI_AvatarIcon_Odette",
+    "side": "UI_AvatarIcon_Side_Odette",
+    "element": "Cryo"
+  },
+  {
     "name": "Ororon",
     "icon": "UI_AvatarIcon_Olorun",
     "side": "UI_AvatarIcon_Side_Olorun",
     "element": "Electro"
+  },
+  {
+    "name": "Prune",
+    "icon": "UI_AvatarIcon_Prune",
+    "side": "UI_AvatarIcon_Side_Prune",
+    "element": "Anemo"
   },
   {
     "name": "Pyro Archon (Test)",
@@ -514,6 +555,12 @@ window.DPS_CHARACTER_CATALOG = [
     "name": "Rosaria",
     "icon": "UI_AvatarIcon_Rosaria",
     "side": "UI_AvatarIcon_Side_Rosaria",
+    "element": "Cryo"
+  },
+  {
+    "name": "Sandrone",
+    "icon": "UI_AvatarIcon_Sandrone",
+    "side": "UI_AvatarIcon_Side_Sandrone",
     "element": "Cryo"
   },
   {
@@ -593,6 +640,12 @@ window.DPS_CHARACTER_CATALOG = [
     "icon": "UI_AvatarIcon_Varesa",
     "side": "UI_AvatarIcon_Side_Varesa",
     "element": "Electro"
+  },
+  {
+    "name": "Varka",
+    "icon": "UI_AvatarIcon_Varka",
+    "side": "UI_AvatarIcon_Side_Varka",
+    "element": "Anemo"
   },
   {
     "name": "Venti",
@@ -706,6 +759,12 @@ window.DPS_CHARACTER_CATALOG = [
     "name": "Zhongli",
     "icon": "UI_AvatarIcon_Zhongli",
     "side": "UI_AvatarIcon_Side_Zhongli",
+    "element": "Geo"
+  },
+  {
+    "name": "Zibai",
+    "icon": "UI_AvatarIcon_Zibai",
+    "side": "UI_AvatarIcon_Side_Zibai",
     "element": "Geo"
   }
 ];
