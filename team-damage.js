@@ -6,7 +6,7 @@
 (function(){
 'use strict';
 const colors={Pyro:'#e98962',Hydro:'#67bde2',Anemo:'#7bc6a9',Electro:'#b58be8',Cryo:'#96d9f5',Dendro:'#92c977',Geo:'#d5ae6d','Multi-element':'#a7b9df',Unknown:'#8995b4'};
-const synonyms={'Yae Miko':['Yae'],'Kaedehara Kazuha':['Kazuha'],'Yumemizuki Mizuki':['Mizuki'],'Raiden Shogun':['Raiden'],'Tartaglia':['Childe'],'Wanderer':['Benedict'],'Bennett':['Bennet'],'Aether':['Traveler']};
+const synonyms={'Yae Miko':['Yae'],'Kaedehara Kazuha':['Kazuha'],'Yumemizuki Mizuki':['Mizuki'],'Raiden Shogun':['Raiden'],'Tartaglia':['Childe'],'Wanderer':['Benedict'],'Bennett':['Bennet'],'Bennet':['Bennett'],'Aether':['Traveler']};
 const norm=v=>String(v==null?'':v).trim().toLowerCase().replace(/\s+/g,' ');
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>n===null||n===undefined||!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('en-IE',{maximumFractionDigits:2});
@@ -39,11 +39,17 @@ function analyze(test){
  if(!total||total<=0||!names.length)return {status:'unavailable',total:total||null,entries:[],unattributed:total||null,notes:'The original log does not contain a usable team damage total.'};
  const notes=String(t.notes||'');
  const possible={};
+ const supportFields=[['support1','support1Damage'],['support2','support2Damage'],['support3','support3Damage']];
  for(const name of names){
-  if(norm(name)===norm(t.carry)&&carryDamage!==null&&carryDamage>0&&carryDamage<=total){
+  if(norm(name)===norm(t.carry)&&carryDamage!==null&&carryDamage>=0&&carryDamage<=total){
    possible[name]=carryDamage;
    continue;
   }
+  // New structured columns take priority over figures mentioned in historical observations.
+  const corresponding=supportFields.find(([key])=>norm(t[key])===norm(name));
+  const entered=corresponding?number(t[corresponding[1]]):null;
+  if(entered!==null&&entered>=0&&entered<=total){possible[name]=entered;continue;}
+  // Legacy runs still work when only their observation text records a breakdown.
   const found=candidates(notes,name,total,true);
   if(found.length)possible[name]=found[0].amount;
  }
@@ -63,11 +69,12 @@ function analyze(test){
   }
  }
  const complete=names.length===4&&Object.keys(possible).length===4&&Math.abs(knownSum()-total)<=tolerance;
- const amounts=complete?possible:(carryDamage!=null&&carryDamage>0&&carryDamage<=total?{[t.carry]:carryDamage}:{});
+ const overage=knownSum()>total+tolerance;
+ const amounts=overage?(carryDamage!=null&&carryDamage<=total?{[t.carry]:carryDamage}:{}):possible;
  const entries=names.filter(name=>amounts[name]!==undefined).map(name=>({name,damage:amounts[name],percent:pct(amounts[name],total),element:element(name)}));
  const accounted=entries.reduce((sum,x)=>sum+x.damage,0);
  const unattributed=Math.max(0,total-accounted);
- return {status:complete?'complete':entries.length?'partial':'unavailable',total,entries,unattributed,accounted,notes:complete?'Four individual damage values match the recorded team total.':'Only explicitly recorded damage is attributed to a character.',verification:t.verification||''};
+ return {status:complete?'complete':overage?'mismatch':entries.length?'partial':'unavailable',total,entries,unattributed,accounted,notes:complete?'Four individual damage values match the recorded team total.':overage?'Recorded individual values exceed the team total; check the spreadsheet.':'Only explicitly recorded damage is attributed to a character.',verification:t.verification||''};
 }
 function color(name){return colors[element(name)]||colors.Unknown;}
 function card(t,avatar,opts){
@@ -80,7 +87,7 @@ function card(t,avatar,opts){
  const missing=report.unattributed>0?'<div class="dmg-member unattributed"><div class="dmg-member-person"><span class="dmg-unknown-icon">?</span><span class="dmg-name">Unattributed / not documented</span></div><div class="dmg-member-data"><span>'+money(report.unattributed)+'</span><strong>'+pct(report.unattributed,report.total).toFixed(1)+'%</strong></div></div>':'';
  const better=report.status==='complete'?report.entries.filter(e=>norm(e.name)!==norm(t.carry)&&e.damage>(report.entries.find(x=>norm(x.name)===norm(t.carry))?.damage||0)).sort((a,b)=>b.damage-a.damage):[];
  const surprise=better.length?'<div class="dmg-surprise">⚡ '+esc(better[0].name)+' outdamaged the on-field carry in this run! Damage share does not measure buff or support value.</div>':'';
- const tag=report.status==='complete'?'<span class="badge good">Complete · total validated</span>':'<span class="badge warn">Partial · other damage unattributed</span>';
+ const tag=report.status==='complete'?'<span class="badge good">Complete · total validated</span>':report.status==='mismatch'?'<span class="badge bad">Check mismatch in recorded damage</span>':'<span class="badge warn">Partial · other damage unattributed</span>';
  const footer='<div class="dmg-caption">'+tag+' <span class="dmg-source">· Derived from your Google Sheet test record; percentages calculated from total damage</span></div>'+surprise;
  return '<section class="dmg-panel'+(compact?' compact':'')+'">'+intro+'<div class="dmg-stack" aria-label="Team damage split">'+bar+'</div><div class="dmg-members">'+rows+missing+'</div>'+footer+'</section>';
 }
