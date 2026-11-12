@@ -1,6 +1,27 @@
-# The DPS Throne 👑
+# The Bankruptcy Archives · Genshin Operations Centre 👑🌱
 
-A personal Genshin Impact DPS testing hall of fame, published as a static website.
+A personal Genshin Impact command centre with **two connected departments** under one GitHub Pages website: the original DPS Throne and lighter, paper-and-sage **Farming Operations**.
+
+## The two departments
+
+- **DPS Throne:** original battle record database, 60-second leaderboards, team damage analysis, personal support records, Royal Chronicle and character galleries.
+- **Farming Operations:** a warm ivory/sage Command Centre, live project queue, Requirements-based Resin Planner, searchable planning inventory, resin-free objectives and a character roster, all read directly from the existing *Bankruptcy Archives — Farming Priority Tracker (Master)*.
+
+Open the website and use **Archives Home** to choose a department. They share the same navigation, so a character profile in the Throne can jump directly to a matching farming project search.
+
+### Google sign-in and data privacy
+
+Both private spreadsheets use the *same Google OAuth Web Client ID* and read-only Sheets scope. Sign in to one department then the other can reuse an active OAuth token, or use that department's **Connect Google / Drive Sync** button. Once connected, browser-local copies can remain available between sessions until browser data is cleared.
+
+- **DPS master:** https://docs.google.com/spreadsheets/d/1538QSbADzZf0p76qvC1dhhMk8RYO74I51l9G7nQSq_s/edit
+- **Farming master:** https://docs.google.com/spreadsheets/d/1zdi-5X6wL8J-6saDVOOxZLT5O7d52Gm5e0sFgP1p4Mc/edit
+
+**Read-only:** website interactions DO NOT edit either original Google Sheet. All project statuses, inventory updates, resource consumption, and formal records should be changed in Google Sheets. Afterward, refresh the relevant department to see the new results. Public GitHub files intentionally contain no private DPS results or farming inventory values. An OAuth Client ID and spreadsheet IDs are public identifiers, not access credentials. Never commit tokens or client secrets.
+
+**Important limitations:** Farming stock is the planning inventory, NOT a real-time wallet. Some item counts are old or unverified, and the underlying source sometimes retains historical shortages under completed projects. The website preserves existing priority order instead of assuming new priorities. The Resin Planner groups source-documented needs by acquisition type and does **not** fabricate random-drop estimates, resin costs or expected farming days.
+
+The source workbook was checked on 12 November 2026: 44 queued objectives, 285 requirement lines, 628 inventory keys, 26 resin-free tasks and 73 character roster entries. These are not hardcoded and will change as your spreadsheet changes.
+
 
 ## Features
 - Leaderboard, character profiles, full test archive, head-to-head comparisons and test protocol
@@ -17,7 +38,7 @@ A personal Genshin Impact DPS testing hall of fame, published as a static websit
 - Individual-damage summaries inside the Throne Room, each champion's profile, test detail dialogs and side-by-side Duel Lab comparisons
 - Private-source derivation: damage numbers are read preferentially from the structured Support 1/2/3 Damage columns (N, P and R) in the private Google Sheet, falling back to documented historical test notes when no structured value is available. Full four-character breakdowns are accepted only when totals reconcile; missing support numbers stay unattributed.
 
-**Privacy:** The public website source does **not** contain your private test dataset or any Google OAuth secrets. The source spreadsheet remains private. Users must authenticate with a Google account permitted to read it. Data brought into the browser can remain in that browser's local storage.
+**Privacy:** The public website source does **not** contain your private test dataset or farming inventory or any Google OAuth secrets. The source spreadsheet remains private. Users must authenticate with a Google account permitted to read it. Data brought into the browser can remain in that browser's local storage.
 
 ## Launch
 See [SETUP.md](SETUP.md) for GitHub Pages and Google OAuth setup. The homepage is `index.html` and no build step is required.
